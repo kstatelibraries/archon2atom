@@ -95,6 +95,11 @@ class ArchonConnection
         return $this->fetchData(self::ENUM_SUBJECT_SOURCES_ENDPOINT, 1);
     }
 
+    public function getCreatorSources()
+    {
+        return $this->fetchData(self::ENUM_CREATOR_SOURCES_ENDPOINT, 1);
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
