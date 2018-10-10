@@ -7,9 +7,9 @@ use GuzzleHttp\Client;
 class ArchonConnection
 {
 
-	protected $client;
-	protected $archon_session;
-	protected $collectionData;
+    protected $client;
+    protected $archon_session;
+    protected $collectionData;
 
 
 
@@ -41,77 +41,82 @@ class ArchonConnection
     public function __construct()
     {
 
-    	$this->client = new \GuzzleHttp\Client([
-    		'cookies' => true,
-    		'base_uri' => env('ARCHON_BASE_URL'),
-    	]);
+        $this->client = new \GuzzleHttp\Client([
+            'cookies' => true,
+            'base_uri' => env('ARCHON_BASE_URL'),
+        ]);
 
-    	$this->authenticateArchon();
+        $this->authenticateArchon();
     }
 
     public function authenticateArchon() 
     {
-    	$auth = $this->client->POST(self::ADMIN_LOGIN_ENDPOINT,[
-    		'auth' => [env('ARCHON_USERNAME'), env('ARCHON_PASSWORD'), 'basic'],
-    	]);
+        $auth = $this->client->POST(self::ADMIN_LOGIN_ENDPOINT,[
+            'auth' => [env('ARCHON_USERNAME'), env('ARCHON_PASSWORD'), 'basic'],
+        ]);
 
-    	$cookies = $this->client->getConfig('cookies');
-    	$cookie_data = $cookies->toArray();
-    	$this->archon_session = $cookie_data[0]['Value'];
+        $cookies = $this->client->getConfig('cookies');
+        $cookie_data = $cookies->toArray();
+        $this->archon_session = $cookie_data[0]['Value'];
     }
 
     public function fetchData($endpoint, $batch_start = 1)
     {
-		do { 
-			$response = $this->client->GET($endpoint . '&batch_start=' . $batch_start, [
-        		'headers' => [
-        			'session' => $this->archon_session,
-        		]
-        	]);
+        do { 
+            $response = $this->client->GET($endpoint . '&batch_start=' . $batch_start, [
+                'headers' => [
+                    'session' => $this->archon_session,
+                ]
+            ]);
 
-        	if(strpos((string)$response->getBody(), "No matching record") === false) {
-        		$data[] = json_decode($response->getBody(), true);	
-        		$batch_start += 100;
-        	} else {
-        		break;
-        	}
-		} while (true);
+            if(strpos((string)$response->getBody(), "No matching record") === false) {
+                $data[] = json_decode($response->getBody(), true);  
+                $batch_start += 100;
+            } else {
+                break;
+            }
+        } while (true);
 
-		if(!isset($data)) {
-			return false;
-		} else {
-        	return $data;
-		}
+        if(!isset($data)) {
+            return false;
+        } else {
+            return $data;
+        }
+    }
+
+
+    public function getUserGroups()
+    {
+        return $this->fetchData(self::ENUM_USER_GROUPS_ENDPOINT, 1);
     }
 
     public function getCollectionRecords()
     {
-    	$this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
-    	return $this->collectionData;
+        $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
+        return $this->collectionData;
     }
 
     public function getCollectionContentRecords($collectionID)
     {
-    	$endpoint = self::COLLECTION_CONTENT_ENDPOINT . '&cid=' . $collectionID;
-    	return $this->fetchData($endpoint, 1 );
+        $endpoint = self::COLLECTION_CONTENT_ENDPOINT . '&cid=' . $collectionID;
+        return $this->fetchData($endpoint, 1 );
     }
 
     public function getAllCollectionContentRecords()
     {
 
-    	if($this->collectionData == null) 
-    	{
-    		$this->getCollectionRecords();
-    	}
+        if($this->collectionData == null) 
+        {
+            $this->getCollectionRecords();
+        }
 
-    	foreach($this->collectionData as $collection)
-    	{
-    		foreach($collection as $data)
-    		{
-    			$collectionContentRecords[$data['ID']] = $this->getCollectionContentRecords($data['ID'])[0];
-    		}
-    	}
-
-    	return $collectionContentRecords;
+        foreach($this->collectionData as $collection)
+        {
+            foreach($collection as $data)
+            {
+                $collectionContentRecords[$data['ID']] = $this->getCollectionContentRecords($data['ID'])[0];
+            }
+        }
+        return $collectionContentRecords;
     }
 }
