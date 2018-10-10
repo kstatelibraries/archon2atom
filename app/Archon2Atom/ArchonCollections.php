@@ -2,15 +2,10 @@
 
 namespace App\Archon2Atom;
 
-use GuzzleHttp\Client;
 use League\Csv\Writer;
 
 class ArchonCollections
 {
-
-	protected $client;
-	protected $jar;
-	protected $archon_session;
 
     public function __construct($rawData)
     {
