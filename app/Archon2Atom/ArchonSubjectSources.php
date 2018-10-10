@@ -38,7 +38,7 @@ class ArchonSubjectSources
     public function exportData($data)
     {
         $header['content'] = [
-            'groupID', 'SubjectSource', 'EADSource'
+            'subjectID', 'SubjectSource', 'EADSource'
             ];
             
         $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/subjectsources.csv', 'w+');
