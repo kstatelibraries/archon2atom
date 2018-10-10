@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Archon2Atom\ArchonCollections;
+use App\Archon2Atom\ArchonConnection;
+use App\Archon2Atom\ArchonContent;
+
 
 class fetchdata extends Command
 {
@@ -38,8 +41,18 @@ class fetchdata extends Command
      */
     public function handle()
     {
-        $collections = new ArchonCollections();
 
-        $this->info(var_dump($collections->fetchData()));
+        $archon = new ArchonConnection();
+        $raw_collections = $archon->getCollectionRecords();
+        $collections = new ArchonCollections($raw_collections);
+
+        $raw_collection_content = $archon->getAllCollectionContentRecords();
+        $content = new ArchonContent($raw_collection_content);
+
+        
+        // print_r($raw_collection_content);
+
+        // $resultingData = $collections->processData($collectionsData);
+        // $collections->exportData($resultingData);
     }
 }
