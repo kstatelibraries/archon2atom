@@ -110,6 +110,21 @@ class ArchonConnection
         return $this->fetchData(self::ENUM_MATERIAL_TYPES_ENDPOINT, 1);
     }
 
+    public function getContainerTypes()
+    {
+        return $this->fetchData(self::ENUM_CONTAINER_TYPES_ENDPOINT, 1);
+    }
+
+    public function getFileTypes()
+    {
+        return $this->fetchData(self::ENUM_FILE_TYPES_ENDPOINT, 1);
+    }
+
+    public function getProcessingPriorities()
+    {
+        return $this->fetchData(self::ENUM_PROCESSING_PRIORITIES_ENDPOINT, 1);
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
