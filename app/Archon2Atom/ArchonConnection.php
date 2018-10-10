@@ -90,6 +90,11 @@ class ArchonConnection
         return $this->fetchData(self::ENUM_USER_GROUPS_ENDPOINT, 1);
     }
 
+    public function getSubjectSources()
+    {
+        return $this->fetchData(self::ENUM_SUBJECT_SOURCES_ENDPOINT, 1);
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
