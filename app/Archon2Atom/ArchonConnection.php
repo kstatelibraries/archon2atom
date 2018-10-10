@@ -125,6 +125,26 @@ class ArchonConnection
         return $this->fetchData(self::ENUM_PROCESSING_PRIORITIES_ENDPOINT, 1);
     }
 
+    public function getCountries()
+    {
+        return $this->fetchData(self::ENUM_COUNTRIES_ENDPOINT, 1);
+    }
+
+    public function getRepositories()
+    {
+        return $this->fetchData(self::REPOSITORY_ENDPOINT, 1);
+    }
+
+    public function getUsers()
+    {
+        return $this->fetchData(self::USER_ENDPOINT, 1);
+    }
+
+    public function getSubjects()
+    {
+        return $this->fetchData(self::SUBJECT_ENDPOINT, 1);
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
