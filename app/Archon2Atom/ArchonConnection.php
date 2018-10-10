@@ -145,6 +145,16 @@ class ArchonConnection
         return $this->fetchData(self::SUBJECT_ENDPOINT, 1);
     }
 
+    public function getClassifications()
+    {
+        return $this->fetchData(self::CLASSIFICATION_ENDPOINT, 1);
+    }
+
+    public function getAccessions()
+    {
+        return $this->fetchData(self::ACCESSION_ENDPOINT, 1);
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
