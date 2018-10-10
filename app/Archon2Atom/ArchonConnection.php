@@ -10,6 +10,7 @@ class ArchonConnection
     protected $client;
     protected $archon_session;
     protected $collectionData;
+    protected $digitalFiles;
 
 
 
@@ -155,6 +156,17 @@ class ArchonConnection
         return $this->fetchData(self::ACCESSION_ENDPOINT, 1);
     }
 
+    public function getDigitalObjects()
+    {
+        return $this->fetchData(self::DIGITAL_OBJECT_ENDPOINT, 1);
+    }
+
+    public function getDigitalFiles()
+    {
+        $this->digitalFiles = $this->fetchData(self::DIGITAL_FILE_ENDPOINT, 1);
+        return $this->digitalFiles;
+    }
+
     public function getCollectionRecords()
     {
         $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
@@ -183,5 +195,28 @@ class ArchonConnection
             }
         }
         return $collectionContentRecords;
+    }
+
+    public function getAllDigitalFiles()
+    {
+        if($this->digitalFiles == null) 
+        {
+           $this->getDigitalFiles();
+        }
+
+        foreach($this->digitalFiles as $collection)
+        {
+            foreach($collection as $file) 
+            {
+                $url = self::DIGITAL_FILE_BLOB_ENDPOINT . '&batch_start=1&fileid=' . $file['ID'];
+                $response = $this->client->GET($url, [
+                'headers' => [
+                    'session' => $this->archon_session,
+                    ],
+                'sink' => '/home/vagrant/code/archon2atom/storage/app/data_export/files/' . $file['Filename'],
+            ]);
+            }
+        }
+
     }
 }
