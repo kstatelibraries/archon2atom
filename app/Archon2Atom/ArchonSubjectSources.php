@@ -41,7 +41,7 @@ class ArchonSubjectSources
             'subjectID', 'SubjectSource', 'EADSource'
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/subjectsources.csv', 'w+');
+        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_subjectsources.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']); //using an array
     }

@@ -43,7 +43,7 @@ class ArchonCountries
             'countryID', 'CountryName', 'ISOAlpha2', 'ISOAlpha3', 'ISONumeric3',
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/countries.csv', 'w+');
+        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_countries.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']); //using an array
     }

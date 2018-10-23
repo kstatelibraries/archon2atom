@@ -40,7 +40,7 @@ class ArchonProcessingPriorities
             'processingPriorityID', 'ProcessingPriority',
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/processingpriorities.csv', 'w+');
+        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_processingpriorities.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']);
     }

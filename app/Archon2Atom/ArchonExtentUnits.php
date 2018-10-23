@@ -40,7 +40,7 @@ class ArchonExtentUnits
             'extentID', 'ExtentUnit',
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/extentunits.csv', 'w+');
+        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_extentunits.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']); //using an array
     }

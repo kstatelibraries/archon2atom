@@ -41,7 +41,7 @@ class ArchonCreatorSources
             'creatorSourceID', 'CreatorSource', 'SourceAbbreviation'
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/creatorsources.csv', 'w+');
+        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_creatorsources.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']); //using an array
     }
