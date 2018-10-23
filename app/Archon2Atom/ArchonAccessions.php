@@ -135,7 +135,7 @@ class ArchonAccessions
             'ExtentUnitID', 'DisplayPosition'
         ];
         $header['creators'] = [
-            'accessionId', 'subjectID'
+            'accessionId', 'creatorID'
         ];
 
         $header['collections'] = [
