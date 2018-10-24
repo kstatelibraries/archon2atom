@@ -8,6 +8,7 @@ use App\Archon2Atom\ArchonConnection;
 use App\Archon2Atom\ArchonContent;
 use App\Archon2Atom\ArchonUserGroups;
 use App\Archon2Atom\ArchonSubjectSources;
+use App\Archon2Atom\ArchonCreators;
 use App\Archon2Atom\ArchonCreatorSources;
 use App\Archon2Atom\ArchonExtentUnits;
 use App\Archon2Atom\ArchonMaterialTypes;
@@ -22,6 +23,7 @@ use App\Archon2Atom\ArchonClassifications;
 use App\Archon2Atom\ArchonAccessions;
 use App\Archon2Atom\ArchonDigitalObjects;
 use App\Archon2Atom\ArchonDigitalFiles;
+use App\Archon2Atom\AtomAccessions;
 
 
 class fetchdata extends Command
@@ -74,6 +76,9 @@ class fetchdata extends Command
         $raw_creator_sources = $archon->getCreatorSources();
         $creator_sources = new ArchonCreatorSources($raw_creator_sources);
 
+        $raw_creators = $archon->getCreators();
+        $creators = new ArchonCreators($raw_creators);
+
         $raw_extent_units = $archon->getExtentUnits();
         $extent_units = new ArchonExtentUnits($raw_extent_units);
 
@@ -114,6 +119,9 @@ class fetchdata extends Command
         $digital_files = new ArchonDigitalFiles($raw_digital_files);
 
         $archon->getAllDigitalFiles();
+
+        $exportAccessionData = $archon->exportAccessionDataAtom();
+        $atom_accession = new AtomAccessions($exportAccessionData);
 
     }
 }
