@@ -11,6 +11,11 @@ class ArchonConnection
     protected $archon_session;
     protected $collectionData;
     protected $digitalFiles;
+    protected $enumExtentUnits;
+    protected $enumProcessingPriorities;
+    protected $creators;
+    protected $enumMaterialTypes;
+    protected $accessionData;
 
 
 
@@ -21,11 +26,18 @@ class ArchonConnection
     const ENUM_CREATOR_SOURCES_ENDPOINT = "?p=core/enums&enum_type=creatorsources";
     const ENUM_EXTENT_UNITS_ENDPOINT = "?p=core/enums&enum_type=extentunits";
     const ENUM_MATERIAL_TYPES_ENDPOINT = "?p=core/enums&enum_type=materialtypes";
-    const ENUM_ACCESSION_TYPES_ENDPOINT = "?p=core/enums&enum_type=materialtypes";
-    const ENUM_CONTAINER_TYPES_ENDPOINT = "?p=core/enums&enum_type=containertypes";
     const ENUM_FILE_TYPES_ENDPOINT = "?p=core/enums&enum_type=filetypes";
     const ENUM_PROCESSING_PRIORITIES_ENDPOINT = "?p=core/enums&enum_type=processingpriorities";
     const ENUM_COUNTRIES_ENDPOINT = "?p=core/enums&enum_type=countries";
+    const ENUM_CONTAINER_TYPES_ENDPOINT = "?p=core/enums&enum_type=containertypes";
+    /* 
+    *
+    * The following was in ArchivesSpace's export fields, but the data does not exist as an exportable
+    * field in archon.
+    *
+    */ 
+    #const ENUM_ACCESSION_TYPES_ENDPOINT = "?p=core/enums&enum_type=materialtypes";
+
 
     const REPOSITORY_ENDPOINT = "?p=core/repositories";
     const USER_ENDPOINT = "?p=core/users";
@@ -96,6 +108,12 @@ class ArchonConnection
         return $this->fetchData(self::ENUM_SUBJECT_SOURCES_ENDPOINT, 1);
     }
 
+    public function getCreators()
+    {
+        $this->creators = $this->fetchData(self::CREATOR_ENDPOINT, 1);
+        return $this->creators;
+    }
+
     public function getCreatorSources()
     {
         return $this->fetchData(self::ENUM_CREATOR_SOURCES_ENDPOINT, 1);
@@ -103,12 +121,14 @@ class ArchonConnection
 
     public function getExtentUnits()
     {
-        return $this->fetchData(self::ENUM_EXTENT_UNITS_ENDPOINT, 1);
+        $this->enumExtentUnits = $this->fetchData(self::ENUM_EXTENT_UNITS_ENDPOINT, 1);
+        return $this->enumExtentUnits;
     }
 
     public function getMaterialTypes()
     {
-        return $this->fetchData(self::ENUM_MATERIAL_TYPES_ENDPOINT, 1);
+        $this->enumMaterialTypes = $this->fetchData(self::ENUM_MATERIAL_TYPES_ENDPOINT, 1);
+        return $this->enumMaterialTypes;
     }
 
     public function getContainerTypes()
@@ -123,7 +143,8 @@ class ArchonConnection
 
     public function getProcessingPriorities()
     {
-        return $this->fetchData(self::ENUM_PROCESSING_PRIORITIES_ENDPOINT, 1);
+        $this->enumProcessingPriorities = $this->fetchData(self::ENUM_PROCESSING_PRIORITIES_ENDPOINT, 1);
+        return $this->enumProcessingPriorities;
     }
 
     public function getCountries()
@@ -153,7 +174,8 @@ class ArchonConnection
 
     public function getAccessions()
     {
-        return $this->fetchData(self::ACCESSION_ENDPOINT, 1);
+        $this->accessionData = $this->fetchData(self::ACCESSION_ENDPOINT, 1);
+        return $this->accessionData;
     }
 
     public function getDigitalObjects()
@@ -209,14 +231,52 @@ class ArchonConnection
             foreach($collection as $file) 
             {
                 $url = self::DIGITAL_FILE_BLOB_ENDPOINT . '&batch_start=1&fileid=' . $file['ID'];
-                $response = $this->client->GET($url, [
-                'headers' => [
-                    'session' => $this->archon_session,
-                    ],
-                'sink' => '/home/vagrant/code/archon2atom/storage/app/data_export/files/' . $file['Filename'],
-            ]);
+                $response = $this->client->get($url, [
+                    'headers' => [
+                        'session' => $this->archon_session,
+                        ],
+                    'sink' => '/home/vagrant/code/archon2atom/storage/app/data_export/files/' . $file['Filename'],
+                ]);
             }
         }
+    }
 
+    public function exportAccessionDataAtom()
+    {
+        if($this->enumExtentUnits == null) 
+        {
+           $this->getExtentUnits();
+        }
+        
+        if ($this->enumProcessingPriorities == null) 
+        {
+            $this->getProcessingPriorities();
+        }
+
+        if($this->creators == null)
+        {
+            $this->getCreators();
+        }
+
+        if($this->enumMaterialTypes == null)
+        {
+            $this->getMaterialTypes();
+        }
+
+        if($this->accessionData == null)
+        {
+            $this->getAccessions();
+        }
+
+        $accessionExportData = 
+            [
+                'accessionData' => collect($this->accessionData)->collapse()->keyBy('ID')->sort()->toArray(),
+                'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
+                'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
+                'materialTypes' => collect($this->enumMaterialTypes)->collapse()->keyBy('ID')->sort()->toArray(),
+                'processingPriorities' => collect($this->enumProcessingPriorities)->collapse()->keyBy('ID')->sort()->toArray(),
+            ];
+
+        return $accessionExportData;
     }
 }
