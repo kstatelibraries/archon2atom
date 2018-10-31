@@ -3,6 +3,7 @@
 namespace App\Archon2Atom;
 
 use League\Csv\Writer;
+use Carbon\Carbon;
 
 class AtomAccessions
 {
@@ -29,11 +30,11 @@ class AtomAccessions
                     $extentUnitText = (array_key_exists($location['ExtentUnitID'], $data['extentUnits']) ? $data['extentUnits'][$location['ExtentUnitID']]['ExtentUnit'] : 'Undefined'); 
                     if($i == 0)
                     {    
-                        $tmpLocation = sprintf('Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: 1', 
-                            $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText);
+                        $tmpLocation = sprintf('Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: %s', 
+                            $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText, $location['DisplayPosition']);
                     } else {
-                        $tmpLocation = sprintf('%s|Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: 1', 
-                            $tmpLocation, $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText, $tmpLocation);
+                        $tmpLocation = sprintf('%s|Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: %s', 
+                            $tmpLocation, $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText, $location['DisplayPosition']);
                     }
                     $i++;
                 }
@@ -59,22 +60,28 @@ class AtomAccessions
                 }
             }
 
+            $title = explode(", ", $record['Title'], 2);
+
+            $tmpDate = str_replace("–", "-", $record['InclusiveDates']);
+            $eventDates = explode("-", $tmpDate, 2);
+            $eventStartDate = (count($eventDates) > 1 ? $eventDates[0] : $record['InclusiveDates']);
+            $eventEndDate = (count($eventDates) > 1 ? $eventDates[1] : '');
 
             $resultingData[] = [
-                'accessionNumber' => $record['ID'],
-                'acquisitionDate' => $record['AccessionDate'],
+                'accessionNumber' => $record['Identifier'],
+                'acquisitionDate' => Carbon::createFromFormat('Ymd', $record['AccessionDate'], 'UTC')->toDateString(),
                 'sourceOfAcquisition' => $record['Donor'],
                 'locationInformation' => $tmpLocation,
                 'acquisitionType' => $record['DonorNotes'],
                 'resourceType' => '',
-                'title' => $record['Title'],
+                'title' => (count($title) > 1 ? $title[1] : $record['Title']),
                 'archivalHistory' => $record['DonorNotes'],
                 'scopeAndContent' => $record['ScopeContent'],
                 'appraisal' => $record['Comments'],
                 'physicalCondition' => $record['PhysicalDescription'],
                 'receivedExtentUnits' => $record['ReceivedExtent'] . (array_key_exists($record['ReceivedExtentUnitID'], $data['extentUnits']) ? ' ' . $data['extentUnits'][$record['ReceivedExtentUnitID']]['ExtentUnit'] : ''),
                 'processingStatus' => '',
-                'processingPriority' => (array_key_exists($record['ProcessingPriorityID'], $data['processingPriorities']) ? $data['processingPriorities'][$record['ProcessingPriorityID']]['ProcessingPriority'] : ''),
+                'processingPriority' => '',
                 'processingNotes' => $record['Comments'] . (array_key_exists($record['MaterialTypeID'], $data['materialTypes']) ? ' Material Type: ' . $data['materialTypes'][$record['MaterialTypeID']]['MaterialType'] : ''),
                 'donorName' => $record['Donor'],
                 'donorStreetAddress' => $record['DonorContactInformation'],
@@ -87,8 +94,8 @@ class AtomAccessions
                 'creators' => $tmpCreators,
                 'eventTypes' => '',
                 'eventDates' => $record['InclusiveDates'],
-                'eventStartDates' => $record['InclusiveDates'],
-                'eventEndDates' => $record['InclusiveDates'],
+                'eventStartDates' => $eventStartDate,
+                'eventEndDates' => $eventEndDate,
                 'culture' => '',
             ];
 
