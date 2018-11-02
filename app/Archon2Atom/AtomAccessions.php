@@ -107,12 +107,14 @@ class AtomAccessions
                 }
             }
 
+            $email = '';
+            preg_match('/([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}/', $record['DonorContactInformation'], $email);
             $resultingData[] = [
                 'accessionNumber' => $record['Identifier'],
                 'acquisitionDate' => Carbon::createFromFormat('Ymd', $record['AccessionDate'], 'UTC')->toDateString(),
                 'sourceOfAcquisition' => $record['Donor'],
                 'locationInformation' => $tmpLocation,
-                'acquisitionType' => $record['DonorNotes'],
+                'acquisitionType' => '',
                 'resourceType' => '',
                 'title' => (count($title) > 1 ? $title[1] : $record['Title']),
                 'archivalHistory' => $record['DonorNotes'],
@@ -125,18 +127,18 @@ class AtomAccessions
                 'processingNotes' => $record['Comments'] . (array_key_exists($record['MaterialTypeID'], $data['materialTypes']) ? ' Material Type: ' . $data['materialTypes'][$record['MaterialTypeID']]['MaterialType'] : ''),
                 'donorName' => $record['Donor'],
                 'donorStreetAddress' => $record['DonorContactInformation'],
-                'donorCity' => $record['DonorContactInformation'],
-                'donorRegion' => $record['DonorContactInformation'],
-                'donorCountry' => $record['DonorContactInformation'],
-                'donorPostalCode' => $record['DonorContactInformation'],
-                'donorTelephone' => $record['DonorContactInformation'],
-                'donorEmail' => $record['DonorContactInformation'],
+                'donorCity' => '',
+                'donorRegion' => '',
+                'donorCountry' => '',
+                'donorPostalCode' => '',
+                'donorTelephone' => '',
+                'donorEmail' => (array_key_exists(0, $email) ? $email[0] : ''),
                 'creators' => $tmpCreators,
                 'eventTypes' => '',
                 'eventDates' => $tmpDate,
                 'eventStartDates' => $eventStartDate,
                 'eventEndDates' => $eventEndDate,
-                'culture' => '',
+                'culture' => 'en',
             ];
 
         }
