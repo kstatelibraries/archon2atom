@@ -28,19 +28,24 @@ class AtomAccessions
                 {
 
                     $extentUnitText = (array_key_exists($location['ExtentUnitID'], $data['extentUnits']) ? $data['extentUnits'][$location['ExtentUnitID']]['ExtentUnit'] : 'Undefined'); 
+                    $extentUnitString = ($extentUnitText != 'Undefined' ? $location['Extent'] . ' ' . $extentUnitText : '' );
+
                     if($i == 0)
                     {    
-                        $tmpLocation = sprintf('Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: %s', 
-                            $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText, $location['DisplayPosition']);
+                        $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
+                            $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     } else {
-                        $tmpLocation = sprintf('%s|Location: %s Content: %s RangeValue: %s Section: %s Shelf: %s Extent: %s [%s] DisplayPosition: %s', 
-                            $tmpLocation, $location['Location'], $location['Content'], $location['RangeValue'], $location['Section'],$location['Shelf'], $location['Extent'], $extentUnitText, $location['DisplayPosition']);
+                        $tmpLocation = sprintf('%s|%s, %s; %s:R%s/S%s/Sf%s',
+                            $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     }
                     $i++;
+                    $extentUnitText = '';
+                    $extentUnitString = '';
                 }
             }
 
             $tmpCreators = '';
+            $tmpDate = '';
             $j = 0;
             if(isset($record['Creators']))
             {
@@ -52,20 +57,55 @@ class AtomAccessions
                     if($j == 0)
                     {    
                         $tmpCreators = sprintf('%s', $creatorText);
+                        $tmpDate = sprintf('%s', $data['creators'][$creator]['Dates']);
                     } else {
                         $tmpCreators = sprintf('%s|%s', 
                             $tmpCreators, $creatorText);
+                        $tmpDate = sprintf('%s|%s',
+                            $tmpDate, $data['creators'][$creator]['Dates']);
                     }
                     $j++;
+                    $creatorText = '';
                 }
             }
 
             $title = explode(", ", $record['Title'], 2);
 
-            $tmpDate = str_replace("–", "-", $record['InclusiveDates']);
-            $eventDates = explode("-", $tmpDate, 2);
-            $eventStartDate = (count($eventDates) > 1 ? $eventDates[0] : $record['InclusiveDates']);
-            $eventEndDate = (count($eventDates) > 1 ? $eventDates[1] : '');
+            $tmpDate = str_replace("–", "-", $tmpDate);
+            $eventDates = explode("|", $tmpDate);
+
+            $eventStartDate = '';
+            $eventEndDate = '';
+
+            if(count($eventDates) == 1)
+            {
+                $creatorEventDates = explode("-", $eventDates[0]);
+                $eventStartDate = preg_replace('/[^0-9]/', '', $creatorEventDates[0]);
+                $eventEndDate = (array_key_exists(1, $creatorEventDates) ? preg_replace('/[^0-9]/', '', $creatorEventDates[1]) : '');
+            } else if ($tmpDate == "|") {
+                $eventStartDate = '';
+                $eventEndDate = '';
+            } else {
+                $k = 0;
+                $tmpStartDate = '';
+                $tmpEndDate = '';
+                foreach($eventDates as $event)
+                {
+                    $creatorEventDates = explode("-", $event);
+                    $tmpStartDate = preg_replace('/[^0-9]/', '', $creatorEventDates[0]);
+                    $tmpEndDate = (array_key_exists(1, $creatorEventDates) ? preg_replace('/[^0-9]/', '', $creatorEventDates[1]) : '');
+
+                    if($k == 0)
+                    {
+                        $eventStartDate = sprintf("%s", $tmpStartDate);
+                        $eventEndDate = sprintf("%s",$tmpEndDate);
+                    } else {
+                        $eventStartDate = sprintf("%s|%s", $eventStartDate, $tmpStartDate);
+                        $eventEndDate = sprintf("%s|%s", $eventEndDate, $tmpEndDate);
+                    }
+                    $k++;
+                }
+            }
 
             $resultingData[] = [
                 'accessionNumber' => $record['Identifier'],
@@ -79,7 +119,7 @@ class AtomAccessions
                 'scopeAndContent' => $record['ScopeContent'],
                 'appraisal' => $record['Comments'],
                 'physicalCondition' => $record['PhysicalDescription'],
-                'receivedExtentUnits' => $record['ReceivedExtent'] . (array_key_exists($record['ReceivedExtentUnitID'], $data['extentUnits']) ? ' ' . $data['extentUnits'][$record['ReceivedExtentUnitID']]['ExtentUnit'] : ''),
+                'receivedExtentUnits' => (array_key_exists($record['ReceivedExtentUnitID'], $data['extentUnits']) ? $record['ReceivedExtent'] . ' ' . $data['extentUnits'][$record['ReceivedExtentUnitID']]['ExtentUnit'] : ''),
                 'processingStatus' => '',
                 'processingPriority' => '',
                 'processingNotes' => $record['Comments'] . (array_key_exists($record['MaterialTypeID'], $data['materialTypes']) ? ' Material Type: ' . $data['materialTypes'][$record['MaterialTypeID']]['MaterialType'] : ''),
@@ -93,7 +133,7 @@ class AtomAccessions
                 'donorEmail' => $record['DonorContactInformation'],
                 'creators' => $tmpCreators,
                 'eventTypes' => '',
-                'eventDates' => $record['InclusiveDates'],
+                'eventDates' => $tmpDate,
                 'eventStartDates' => $eventStartDate,
                 'eventEndDates' => $eventEndDate,
                 'culture' => '',
