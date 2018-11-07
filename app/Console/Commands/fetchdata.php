@@ -24,6 +24,7 @@ use App\Archon2Atom\ArchonAccessions;
 use App\Archon2Atom\ArchonDigitalObjects;
 use App\Archon2Atom\ArchonDigitalFiles;
 use App\Archon2Atom\AtomAccessions;
+use App\Archon2Atom\AtomInformationObjects;
 
 
 class fetchdata extends Command
@@ -122,6 +123,9 @@ class fetchdata extends Command
 
         $exportAccessionData = $archon->exportAccessionDataAtom();
         $atom_accession = new AtomAccessions($exportAccessionData);
+
+        $exportInformationObjectsData = $archon->exportInformationObjectsDataAtom();
+        $atom_information_objects = new AtomInformationObjects($exportInformationObjectsData);
 
     }
 }

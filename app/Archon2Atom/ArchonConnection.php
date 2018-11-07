@@ -16,6 +16,7 @@ class ArchonConnection
     protected $creators;
     protected $enumMaterialTypes;
     protected $accessionData;
+    protected $subjects;
 
 
 
@@ -164,7 +165,8 @@ class ArchonConnection
 
     public function getSubjects()
     {
-        return $this->fetchData(self::SUBJECT_ENDPOINT, 1);
+        $this->subjects = $this->fetchData(self::SUBJECT_ENDPOINT, 1);
+        return $this->subjects;
     }
 
     public function getClassifications()
@@ -275,6 +277,49 @@ class ArchonConnection
                 'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
                 'materialTypes' => collect($this->enumMaterialTypes)->collapse()->keyBy('ID')->sort()->toArray(),
                 'processingPriorities' => collect($this->enumProcessingPriorities)->collapse()->keyBy('ID')->sort()->toArray(),
+            ];
+
+        return $accessionExportData;
+    }
+
+     public function exportInformationObjectsDataAtom()
+    {
+        if($this->enumExtentUnits == null)
+        {
+           $this->getExtentUnits();
+        }
+
+        if ($this->enumProcessingPriorities == null)
+        {
+            $this->getProcessingPriorities();
+        }
+
+        if($this->creators == null)
+        {
+            $this->getCreators();
+        }
+
+        if($this->enumMaterialTypes == null)
+        {
+            $this->getMaterialTypes();
+        }
+
+        if($this->subjects == null)
+        {
+            $this->getSubjects();
+        }
+
+        if($this->collectionData == null)
+        {
+            $this->getCollectionRecords();
+        }
+
+        $accessionExportData =
+            [
+                'collectionData' => collect($this->collectionData)->collapse()->keyBy('ID')->sort()->toArray(),
+                'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
+                'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
+                'subjects' => collect($this->subjects)->collapse()->keyBy('ID')->sort()->toArray(),
             ];
 
         return $accessionExportData;
