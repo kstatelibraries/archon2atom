@@ -35,7 +35,7 @@ class AtomAccessions
                         $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
                             $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     } else {
-                        $tmpLocation = sprintf('%s|%s, %s; %s:R%s/S%s/Sf%s',
+                        $tmpLocation = sprintf('%s\n%s, %s; %s:R%s/S%s/Sf%s',
                             $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     }
                     $i++;
@@ -46,6 +46,7 @@ class AtomAccessions
 
             $tmpCreators = '';
             $tmpDate = '';
+            $title = '';
             $j = 0;
             if(isset($record['Creators']))
             {
@@ -53,7 +54,7 @@ class AtomAccessions
                 foreach($record['Creators'] as $creator)
                 {
 
-                    $creatorText = (array_key_exists($creator, $data['creators']) ? $data['creators'][$creator]['Name'] : 'Undefined'); 
+                    $creatorText = (array_key_exists($creator, $data['creators']) ? $data['creators'][$creator]['Name'] : '');
                     if($j == 0)
                     {    
                         $tmpCreators = sprintf('%s', $creatorText);
