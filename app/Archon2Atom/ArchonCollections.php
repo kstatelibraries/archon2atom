@@ -144,7 +144,7 @@ class ArchonCollections
 			'ExtentUnitID', 'DisplayPosition'
 		];
 		$header['creators'] = [
-			'collectionID', 'subjectID'
+			'collectionID', 'creatorID'
 		];
 
 
