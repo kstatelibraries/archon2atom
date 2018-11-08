@@ -17,6 +17,7 @@ class ArchonConnection
     protected $enumMaterialTypes;
     protected $accessionData;
     protected $subjects;
+    protected $collectionContentData;
 
 
 
@@ -218,7 +219,9 @@ class ArchonConnection
                 $collectionContentRecords[$data['ID']] = $this->getCollectionContentRecords($data['ID'])[0];
             }
         }
-        return $collectionContentRecords;
+
+        $this->collectionContentData = $collectionContentRecords;
+        return $this->collectionContentData;
     }
 
     public function getAllDigitalFiles()
@@ -314,12 +317,18 @@ class ArchonConnection
             $this->getCollectionRecords();
         }
 
+        if($this->collectionContentData == null)
+        {
+            $this->getAllCollectionContentRecords();
+        }
+
         $accessionExportData =
             [
                 'collectionData' => collect($this->collectionData)->collapse()->keyBy('ID')->sort()->toArray(),
                 'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
                 'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
                 'subjects' => collect($this->subjects)->collapse()->keyBy('ID')->sort()->toArray(),
+                'collectionContentData' => collect($this->collectionContentData)->collapse()->keyBy('ID')->sort()->toArray(),
             ];
 
         return $accessionExportData;
