@@ -17,6 +17,8 @@ class AtomInformationObjects
     public function processData($data)
     {
 
+        // loop through collection data first generating the top level hierarchy
+
         foreach ($data['collectionData'] as $record)
         {
             $tmpLocation = '';
@@ -28,30 +30,175 @@ class AtomInformationObjects
             $title = '';
             $i = 0;
 
-            // if(isset($record['Locations']))
-            // {
+            if(isset($record['Locations']))
+            {
 
-            //     foreach($record['Locations'] as $location)
-            //     {
+                foreach($record['Locations'] as $location)
+                {
 
-            //         $extentUnitText = (array_key_exists($location['ExtentUnitID'], $data['extentUnits']) ? $data['extentUnits'][$location['ExtentUnitID']]['ExtentUnit'] : 'Undefined'); 
-            //         $extentUnitString = ($extentUnitText != 'Undefined' ? $location['Extent'] . ' ' . $extentUnitText : '' );
+                    $extentUnitText = (array_key_exists($location['ExtentUnitID'], $data['extentUnits']) ? $data['extentUnits'][$location['ExtentUnitID']]['ExtentUnit'] : 'Undefined');
+                    $extentUnitString = ($extentUnitText != 'Undefined' ? $location['Extent'] . ' ' . $extentUnitText : '' );
 
-            //         if($i == 0)
-            //         {    
-            //             $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
-            //                 $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
-            //         } else {
-            //             $tmpLocation = sprintf('%s|%s, %s; %s:R%s/S%s/Sf%s',
-            //                 $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
-            //         }
-            //         $i++;
-            //         $extentUnitText = '';
-            //         $extentUnitString = '';
-            //     }
-            // }
+                    if($i == 0)
+                    {
+                        $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
+                            $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
+                    } else {
+                        $tmpLocation = sprintf('%s|%s, %s; %s:R%s/S%s/Sf%s',
+                            $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
+                    }
+                    $i++;
+                    $extentUnitText = '';
+                    $extentUnitString = '';
+                }
+            }
 
             // $tmpDate = '';
+
+            $tmpBiogHistAuthor = '';
+            $tmpBiogHist = '';
+            $tmpBiogSources = '';
+            $tmpHistory = '';
+
+            $j = 0;
+            if(isset($record['Creators']))
+            {
+
+                foreach($record['Creators'] as $creator)
+                {
+                    $tmpBiogHistAuthor = '';
+                    $tmpBiogHist = '';
+                    $tmpBiogSources = '';
+
+                    $creatorText = (array_key_exists($creator, $data['creators']) ? $data['creators'][$creator]['Name'] : '');
+                    if($j == 0)
+                    {
+                        $tmpCreators = sprintf('%s', $creatorText);
+
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . '<lb/>');
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '<lb/>');
+                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+                        $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                    } else {
+                        $tmpCreators = sprintf('%s|%s',
+                            $tmpCreators, $creatorText);
+
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . '<lb/>');
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '<lb/>');
+                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+
+                        $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                    }
+                    $j++;
+                    $creatorText = '';
+                }
+            }
+
+            $k = 0;
+            $subjectText = '';
+            $tmpSubjects = '';
+            if(isset($record['Subjects']))
+            {
+
+                foreach($record['Subjects'] as $subject)
+                {
+
+                    $subjectText = (array_key_exists($subject, $data['subjects']) ? $data['subjects'][$subject]['Subject'] : '');
+                    if($k == 0)
+                    {
+                        $tmpSubjects = sprintf('%s', $subjectText);
+
+                    } else {
+                        $tmpSubjects = sprintf('%s|%s', 
+                            $tmpSubjects, $subjectText);
+                    }
+                    $k++;
+                    $subjectText = '';
+                }
+            }
+
+
+            $tmpFindingAidAuthor = ($record['FindingAidAuthor'] == '' ? '' : 'Finding Aid Author: ' . $record['FindingAidAuthor'] . "\r\n");
+            $tmpProcessingInfo = ($record['ProcessingInfo'] == '' ? '' : 'Processing Info: ' . $record['ProcessingInfo'] . "\r\n");
+            $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
+            $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpArchivistNote;
+            $title = explode(", ", $record['Title'], 2);
+
+            $resultingData[] = [
+                'legacyId' => $record['ID'],
+                'parentId' => '',
+                'qubitParentSlug' => '',
+                'identifier' => '', //$record['ID'],
+                'accessionNumber' => '',
+                'title' => (count($title) > 1 ? $title[1] : $record['Title']),
+                'levelOfDescription' => 'Collection',
+                'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
+                'repository' => 'Morse Department of Special Collections',
+                'archivalHistory' => $record['CustodialHistory'],
+                'acquisition' => $record['AcquisitionSource'],
+                'scopeAndContent' => $record['Scope'],
+                'appraisal' => $record['AppraisalInfo'],
+                'accruals' => $record['AccrualInfo'],
+                'arrangement' => $record['Arrangement'],
+                'accessConditions' => $record['AccessRestrictions'],
+                'reproductionConditions' => $record['UseRestrictions'],
+                'language' => '',
+                'script' => '',
+                'languageNote' => '',
+                'physicalCharacteristics' => '',
+                'findingAids' => $record['PublicationNote'],
+                'locationOfOriginals' => '' , // blank in our data
+                'locationOfCopies' => '', // blank in our data
+                'relatedUnitsOfDescription' => $record['RelatedMaterials'],
+                'publicationNote' => $record['PublicationNote'],
+                'digitalObjectURI' => '',
+                'generalNote' => $record['OtherNote'] . ($tmpLocation != '' ? ($record['OtherNote'] != '' ? '|' : '') . $tmpLocation : ''),
+                'subjectAccessPoints' => $tmpSubjects, // need to build
+                'placeAccessPoints' => '',
+                'nameAccessPoints' => '',
+                'genreAccessPoints' => '',
+                'descriptionIdentifier' => '',
+                'institutionIdentifier' => '',
+                'rules' => $this->descriptiveRules($record['DescriptiveRulesID']), 
+                'descriptionStatus' => '',
+                'levelOfDetail' => '',
+                'revisionHistory' => $record['RevisionHistory'],
+                'languageOfDescription' => 'en',
+                'scriptOfDescription' => '',
+                'sources' => $record['PublicationNote'], 
+                'archivistNote' => $tmpArchivistNote, 
+                'publicationStatus' => ($record['Enabled'] == 0 ? 'Draft' : 'Published'),
+                'physicalObjectName' => '',
+                'physicalObjectLocation' => '', // can't just put this field there, does not show up without objectname / type
+                'physicalObjectType' => '',
+                'alternativeIdentifiers' => '',
+                'alternativeIdentifierLabels' => '',
+                'eventDates' => $record['InclusiveDates'],
+                'eventTypes' => '',
+                'eventStartDates' => $record['NormalDateBegin'],
+                'eventEndDates' => $record['NormalDateEnd'],
+                'eventActors' => $tmpCreators,
+                'eventActorHistories' => $tmpHistory,
+                'culture' => 'en',
+            ];
+
+        }
+
+
+
+        // loop through collection Content data ... big copy past of above for the most part.
+
+
+        foreach ($data['collectionContentData'] as $record)
+        {
+            $tmpLocation = '';
+            $tmpCreators = '';
+            $title = '';
+            $i = 0;
+
+            $parentID = ($record['ParentID'] == 0 ? $record['CollectionID'] : 'cc-' . $record['ParentID']);
+            $recordID = 'cc-' . $record['ID'];
+
 
             $tmpBiogHistAuthor = '';
             $tmpBiogHist = '';
@@ -115,72 +262,68 @@ class AtomInformationObjects
                 }
             }
 
-
-            $tmpFindingAidAuthor = ($record['FindingAidAuthor'] == '' ? '' : 'Finding Aid Author: ' . $record['FindingAidAuthor'] . '\n');
-            $tmpProcessingInfo = ($record['ProcessingInfo'] == '' ? '' : 'Processing Info: ' . $record['ProcessingInfo'] . '\n');
-            $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
-            $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpArchivistNote;
             $title = explode(", ", $record['Title'], 2);
 
             $resultingData[] = [
-                'legacyId' => $record['ID'],
-                'parentId' => '',
+                'legacyId' => $recordID,
+                'parentId' => $parentID,
                 'qubitParentSlug' => '',
-                'identifier' => '', //$record['ID'],
-                'accessionNumber' => '',
+                'identifier' => $record['UniqueID'], //$record['ID'],
+                'accessionNumber' => '', // Does not have one
                 'title' => (count($title) > 1 ? $title[1] : $record['Title']),
-                'levelOfDescription' => 'Collection',
-                'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
+                'levelOfDescription' => $this->levelsOfDescription($record['EADLevel']),
+                'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',
-                'archivalHistory' => $record['CustodialHistory'],
-                'acquisition' => $record['AcquisitionSource'],
-                'scopeAndContent' => $record['Scope'],
-                'appraisal' => $record['AppraisalInfo'],
-                'accruals' => $record['AccrualInfo'],
-                'arrangement' => $record['Arrangement'],
-                'accessConditions' => $record['AccessRestrictions'],
-                'reproductionConditions' => $record['UseRestrictions'],
+                'archivalHistory' => '', // N/A
+                'acquisition' => '', // N/A
+                'scopeAndContent' => '', // N/A
+                'appraisal' => '', // N/A
+                'accruals' => '', // N/A
+                'arrangement' => '', // N/A
+                'accessConditions' => '', // N/A
+                'reproductionConditions' => '', // N/A
                 'language' => '',
                 'script' => '',
                 'languageNote' => '',
                 'physicalCharacteristics' => '',
-                'findingAids' => $record['PublicationNote'],
-                'locationOfOriginals' => '' , // blank in our data
-                'locationOfCopies' => '', // blank in our data
-                'relatedUnitsOfDescription' => $record['RelatedMaterials'],
-                'publicationNote' => $record['PublicationNote'],
-                'digitalObjectURI' => '',
-                'generalNote' => $record['OtherNote'],
-                'subjectAccessPoints' => $tmpSubjects, // need to build
+                'findingAids' => '', // N/A
+                'locationOfOriginals' => '', // N/A
+                'locationOfCopies' => '', // N/A
+                'relatedUnitsOfDescription' => '', // N/A
+                'publicationNote' => '', // N/A
+                'digitalObjectURI' => '', // N/A
+                'generalNote' => $record['Description'],
+                'subjectAccessPoints' => $tmpSubjects,
                 'placeAccessPoints' => '',
                 'nameAccessPoints' => '',
                 'genreAccessPoints' => '',
                 'descriptionIdentifier' => '',
                 'institutionIdentifier' => '',
-                'rules' => $this->descriptiveRules($record['DescriptiveRulesID']), 
+                'rules' => '', // N/A
                 'descriptionStatus' => '',
                 'levelOfDetail' => '',
-                'revisionHistory' => $record['RevisionHistory'],
+                'revisionHistory' => '', // N/A
                 'languageOfDescription' => 'en',
                 'scriptOfDescription' => '',
-                'sources' => $record['PublicationNote'], 
-                'archivistNote' => $tmpArchivistNote, 
+                'sources' => '', // N/A
+                'archivistNote' => '', // N/A
                 'publicationStatus' => ($record['Enabled'] == 0 ? 'Draft' : 'Published'),
                 'physicalObjectName' => '',
                 'physicalObjectLocation' => '',
                 'physicalObjectType' => '',
                 'alternativeIdentifiers' => '',
                 'alternativeIdentifierLabels' => '',
-                'eventDates' => $record['InclusiveDates'],
+                'eventDates' => $record['Date'],
                 'eventTypes' => '',
-                'eventStartDates' => $record['NormalDateBegin'],
-                'eventEndDates' => $record['NormalDateEnd'],
+                'eventStartDates' => '', // N/A
+                'eventEndDates' => '', // N/A
                 'eventActors' => $tmpCreators,
                 'eventActorHistories' => $tmpHistory,
                 'culture' => 'en',
             ];
 
         }
+
 
         $outputData['infoObjects'] = $resultingData;
 
@@ -236,6 +379,28 @@ class AtomInformationObjects
             default:
                 return '';
                 break;                                
+        }
+    }
+
+    protected function levelsOfDescription($level)
+    {
+        switch(strtolower($level))
+        {
+            case 'file':
+                return 'File';
+                break;
+            case 'item':
+                return 'Item';
+                break;
+            case 'series':
+                return 'Series';
+                break;
+            case 'subseries':
+                return 'Subseries';
+                break;
+            default:
+                return '';
+                break;
         }
     }
 }
