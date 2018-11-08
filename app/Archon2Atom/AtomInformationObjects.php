@@ -270,7 +270,7 @@ class AtomInformationObjects
                 'qubitParentSlug' => '',
                 'identifier' => $record['UniqueID'], //$record['ID'],
                 'accessionNumber' => '', // Does not have one
-                'title' => (count($title) > 1 ? $title[1] : $record['Title']),
+                'title' => (count($title) > 1 ? $title[1] : ($record['Title'] = '' ? $record['UniqueID'] : $record['Title'])),
                 'levelOfDescription' => $this->levelsOfDescription($record['EADLevel']),
                 'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',
