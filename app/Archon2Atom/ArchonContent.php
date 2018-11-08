@@ -116,7 +116,7 @@ class ArchonContent
 			'collectionID', 'Notes'
 		];
 		$header['creators'] = [
-			'collectionID', 'subjectID'
+			'collectionID', 'creatorID'
 		];
 
 
