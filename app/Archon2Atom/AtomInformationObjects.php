@@ -22,12 +22,12 @@ class AtomInformationObjects
         foreach ($data['collectionData'] as $record)
         {
             $tmpLocation = '';
+            $tmpLocationName = '';
             $tmpFindingAidAuthor = '';
             $tmpProcessingInfo = '';
             $tmpPublicationDate = '';
             $tmpArchivistNote = '';
             $tmpCreators = '';
-            $title = '';
             $i = 0;
 
             if(isset($record['Locations']))
@@ -41,19 +41,35 @@ class AtomInformationObjects
 
                     if($i == 0)
                     {
-                        $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
-                            $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
+                        if($location['Location'] == 'Annex')
+                        {
+                            // Range Value = Barcode
+                            $tmpLocationName = sprintf('%s, %s', $location['RangeValue'], $location['Content']);
+                            $tmpLocation = 'Annex';
+                        } else {
+                            $tmpLocationName = $location['Content'];
+                            $tmpLocation = sprintf('%s:R%s/S%s/Sf%s; %s, %s',
+                                $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf'],$location['Content'], $extentUnitString);
+                        }
+
                     } else {
-                        $tmpLocation = sprintf('%s|%s, %s; %s:R%s/S%s/Sf%s',
-                            $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
+
+                        if($location['Location'] == 'Annex')
+                        {
+                            // Range Value = Barcode
+                            $tmpLocationName = sprintf('%s|%s, %s', $tmpLocationName, $location['RangeValue'], $location['Content']);                            
+                            $tmpLocation = sprintf('%s|Annex', $tmpLocation);
+                        } else {
+                            $tmpLocationName = sprintf('%s|%s', $tmpLocationName, $location['Content']);
+                            $tmpLocation = sprintf('%s|%s:R%s/S%s/Sf%s; %s, %s',
+                                $tmpLocation, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf'],$location['Content'], $extentUnitString);
+                        }
                     }
                     $i++;
                     $extentUnitText = '';
                     $extentUnitString = '';
                 }
             }
-
-            // $tmpDate = '';
 
             $tmpBiogHistAuthor = '';
             $tmpBiogHist = '';
@@ -75,16 +91,16 @@ class AtomInformationObjects
                     {
                         $tmpCreators = sprintf('%s', $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . '<lb/>');
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '<lb/>');
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
                         $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
                         $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     } else {
                         $tmpCreators = sprintf('%s|%s',
                             $tmpCreators, $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . '<lb/>');
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '<lb/>');
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
                         $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
 
                         $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
@@ -122,7 +138,6 @@ class AtomInformationObjects
             $tmpProcessingInfo = ($record['ProcessingInfo'] == '' ? '' : 'Processing Info: ' . $record['ProcessingInfo'] . "\r\n");
             $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
             $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpArchivistNote;
-            $title = explode(", ", $record['Title'], 2);
 
             $resultingData[] = [
                 'legacyId' => $record['ID'],
@@ -130,7 +145,7 @@ class AtomInformationObjects
                 'qubitParentSlug' => '',
                 'identifier' => '', //$record['ID'],
                 'accessionNumber' => '',
-                'title' => (count($title) > 1 ? $title[1] : $record['Title']),
+                'title' => $record['Title'],
                 'levelOfDescription' => 'Collection',
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
                 'repository' => 'Morse Department of Special Collections',
@@ -152,7 +167,7 @@ class AtomInformationObjects
                 'relatedUnitsOfDescription' => $record['RelatedMaterials'],
                 'publicationNote' => $record['PublicationNote'],
                 'digitalObjectURI' => '',
-                'generalNote' => $record['OtherNote'] . ($tmpLocation != '' ? ($record['OtherNote'] != '' ? '|' : '') . $tmpLocation : ''),
+                'generalNote' => $record['OtherNote'],
                 'subjectAccessPoints' => $tmpSubjects, // need to build
                 'placeAccessPoints' => '',
                 'nameAccessPoints' => '',
@@ -168,9 +183,9 @@ class AtomInformationObjects
                 'sources' => $record['PublicationNote'], 
                 'archivistNote' => $tmpArchivistNote, 
                 'publicationStatus' => ($record['Enabled'] == 0 ? 'Draft' : 'Published'),
-                'physicalObjectName' => '',
-                'physicalObjectLocation' => '', // can't just put this field there, does not show up without objectname / type
-                'physicalObjectType' => '',
+                'physicalObjectName' => $tmpLocationName,
+                'physicalObjectLocation' => $tmpLocation,
+                'physicalObjectType' => 'Box',
                 'alternativeIdentifiers' => '',
                 'alternativeIdentifierLabels' => '',
                 'eventDates' => $record['InclusiveDates'],
@@ -193,7 +208,6 @@ class AtomInformationObjects
         {
             $tmpLocation = '';
             $tmpCreators = '';
-            $title = '';
             $i = 0;
 
             $parentID = ($record['ParentID'] == 0 ? $record['CollectionID'] : 'cc-' . $record['ParentID']);
@@ -220,16 +234,16 @@ class AtomInformationObjects
                     {    
                         $tmpCreators = sprintf('%s', $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . '\n');
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '\n');
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
                         $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
                         $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     } else {
                         $tmpCreators = sprintf('%s|%s', 
                             $tmpCreators, $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . '\n');
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . '\n');
+                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
                         $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
 
                         $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
@@ -262,16 +276,16 @@ class AtomInformationObjects
                 }
             }
 
-            $title = explode(", ", $record['Title'], 2);
+            $eadLevel = $this->levelsOfDescription($record['EADLevel']);
 
             $resultingData[] = [
                 'legacyId' => $recordID,
                 'parentId' => $parentID,
                 'qubitParentSlug' => '',
-                'identifier' => $record['UniqueID'], //$record['ID'],
+                'identifier' => '', // Do not have a unique ID ...
                 'accessionNumber' => '', // Does not have one
-                'title' => (count($title) > 1 ? $title[1] : ($record['Title'] = '' ? $record['UniqueID'] : $record['Title'])),
-                'levelOfDescription' => $this->levelsOfDescription($record['EADLevel']),
+                'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['Title']),
+                'levelOfDescription' => ($eadLevel != '' ? $eadLevel : (strpos($record['UniqueID'], 'Box') !== false ? 'Box' : '')),
                 'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',
                 'archivalHistory' => '', // N/A
@@ -354,9 +368,42 @@ class AtomInformationObjects
             ];
 
 
-        $writer_users = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import.csv', 'w+');
-        $writer_users->insertOne($header['infoObjects']);
-        $writer_users->insertAll($data['infoObjects']); 
+        // Export Collection Level Data
+        $collections = collect($data['infoObjects'])->where("levelOfDescription", 'Collection')->toArray();
+        $series = collect($data['infoObjects'])->where("levelOfDescription", 'Series')->toArray();
+        $subseries = collect($data['infoObjects'])->where("levelOfDescription", 'Subseries')->toArray();
+        $box = collect($data['infoObjects'])->where("levelOfDescription", 'Box')->toArray();
+        $file = collect($data['infoObjects'])->where("levelOfDescription", 'File')->toArray();
+        $item = collect($data['infoObjects'])->where("levelOfDescription", 'Item')->toArray();
+        $blank = $subseries = collect($data['infoObjects'])->where("levelOfDescription", '')->toArray();
+
+        $writer_collections = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-collections.csv', 'w+');
+        $writer_collections->insertOne($header['infoObjects']);
+        $writer_collections->insertAll($collections); 
+
+        $writer_series = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-series.csv', 'w+');
+        $writer_series->insertOne($header['infoObjects']);
+        $writer_series->insertAll($series); 
+
+        $writer_subseries = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-subseries.csv', 'w+');
+        $writer_subseries->insertOne($header['infoObjects']);
+        $writer_subseries->insertAll($subseries); 
+
+        $writer_box = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-box.csv', 'w+');
+        $writer_box->insertOne($header['infoObjects']);
+        $writer_box->insertAll($box); 
+
+        $writer_file = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-file.csv', 'w+');
+        $writer_file->insertOne($header['infoObjects']);
+        $writer_file->insertAll($file); 
+
+        $writer_item = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-item.csv', 'w+');
+        $writer_item->insertOne($header['infoObjects']);
+        $writer_item->insertAll($item); 
+
+        $writer_blank = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-blank.csv', 'w+');
+        $writer_blank->insertOne($header['infoObjects']);
+        $writer_blank->insertAll($blank); 
     }
 
     protected function descriptiveRules($ruleID)

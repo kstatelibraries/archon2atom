@@ -35,7 +35,7 @@ class AtomAccessions
                         $tmpLocation = sprintf('%s, %s; %s:R%s/S%s/Sf%s',
                             $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     } else {
-                        $tmpLocation = sprintf('%s\n%s, %s; %s:R%s/S%s/Sf%s',
+                        $tmpLocation = sprintf("%s\r\n%s, %s; %s:R%s/S%s/Sf%s",
                             $tmpLocation, $location['Content'], $extentUnitString, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf']);
                     }
                     $i++;
@@ -107,9 +107,6 @@ class AtomAccessions
                     $k++;
                 }
             }
-
-            $email = '';
-            preg_match('/([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}/', $record['DonorContactInformation'], $email);
             $resultingData[] = [
                 'accessionNumber' => $record['Identifier'],
                 'acquisitionDate' => Carbon::createFromFormat('Ymd', $record['AccessionDate'], 'UTC')->toDateString(),
@@ -118,7 +115,7 @@ class AtomAccessions
                 'acquisitionType' => '',
                 'resourceType' => '',
                 'title' => (count($title) > 1 ? $title[1] : $record['Title']),
-                'archivalHistory' => $record['DonorNotes'],
+                'archivalHistory' => $record['DonorNotes'] . ($record['DonorContactInformation'] != '' ? ($record['DonorNotes'] != '' ? '|' : '') . $record['DonorContactInformation'] : ''),
                 'scopeAndContent' => $record['ScopeContent'],
                 'appraisal' => $record['Comments'],
                 'physicalCondition' => $record['PhysicalDescription'],
@@ -127,13 +124,13 @@ class AtomAccessions
                 'processingPriority' => '',
                 'processingNotes' => $record['Comments'] . (array_key_exists($record['MaterialTypeID'], $data['materialTypes']) ? ' Material Type: ' . $data['materialTypes'][$record['MaterialTypeID']]['MaterialType'] : ''),
                 'donorName' => $record['Donor'],
-                'donorStreetAddress' => $record['DonorContactInformation'],
+                'donorStreetAddress' => '',
                 'donorCity' => '',
                 'donorRegion' => '',
                 'donorCountry' => '',
                 'donorPostalCode' => '',
                 'donorTelephone' => '',
-                'donorEmail' => (array_key_exists(0, $email) ? $email[0] : ''),
+                'donorEmail' => '',
                 'creators' => $tmpCreators,
                 'eventTypes' => '',
                 'eventDates' => $tmpDate,

@@ -68,58 +68,58 @@ class fetchdata extends Command
         $raw_collection_content = $archon->getAllCollectionContentRecords();
         $content = new ArchonContent($raw_collection_content);
 
-        $raw_user_groups = $archon->getUserGroups();
-        $user_groups = new ArchonUserGroups($raw_user_groups);
+        // $raw_user_groups = $archon->getUserGroups();
+        // $user_groups = new ArchonUserGroups($raw_user_groups);
 
-        $raw_subject_sources = $archon->getSubjectSources();
-        $subject_sources = new ArchonSubjectSources($raw_subject_sources);
+        // $raw_subject_sources = $archon->getSubjectSources();
+        // $subject_sources = new ArchonSubjectSources($raw_subject_sources);
 
-        $raw_creator_sources = $archon->getCreatorSources();
-        $creator_sources = new ArchonCreatorSources($raw_creator_sources);
+        // $raw_creator_sources = $archon->getCreatorSources();
+        // $creator_sources = new ArchonCreatorSources($raw_creator_sources);
 
-        $raw_creators = $archon->getCreators();
-        $creators = new ArchonCreators($raw_creators);
+        // $raw_creators = $archon->getCreators();
+        // $creators = new ArchonCreators($raw_creators);
 
-        $raw_extent_units = $archon->getExtentUnits();
-        $extent_units = new ArchonExtentUnits($raw_extent_units);
+        // $raw_extent_units = $archon->getExtentUnits();
+        // $extent_units = new ArchonExtentUnits($raw_extent_units);
 
-        $raw_material_types = $archon->getMaterialTypes();
-        $material_types = new ArchonMaterialTypes($raw_material_types);
+        // $raw_material_types = $archon->getMaterialTypes();
+        // $material_types = new ArchonMaterialTypes($raw_material_types);
 
-        $raw_container_types = $archon->getContainerTypes();
-        $container_types = new ArchonContainerTypes($raw_container_types);
+        // $raw_container_types = $archon->getContainerTypes();
+        // $container_types = new ArchonContainerTypes($raw_container_types);
 
-        $raw_file_types = $archon->getFileTypes();
-        $file_types = new ArchonFileTypes($raw_file_types);
+        // $raw_file_types = $archon->getFileTypes();
+        // $file_types = new ArchonFileTypes($raw_file_types);
 
-        $raw_processing_priorities = $archon->getProcessingPriorities();
-        $processing_priorities = new ArchonProcessingPriorities($raw_processing_priorities);
+        // $raw_processing_priorities = $archon->getProcessingPriorities();
+        // $processing_priorities = new ArchonProcessingPriorities($raw_processing_priorities);
 
-        $raw_countries = $archon->getCountries();
-        $countries = new ArchonCountries($raw_countries);
+        // $raw_countries = $archon->getCountries();
+        // $countries = new ArchonCountries($raw_countries);
 
-        $raw_repositories = $archon->getRepositories();
-        $repositories = new ArchonRepositories($raw_repositories);
+        // $raw_repositories = $archon->getRepositories();
+        // $repositories = new ArchonRepositories($raw_repositories);
 
-        $raw_users = $archon->getUsers();
-        $users = new ArchonUsers($raw_users);
+        // $raw_users = $archon->getUsers();
+        // $users = new ArchonUsers($raw_users);
  
-        $raw_subjects = $archon->getSubjects();
-        $subjects = new ArchonSubjects($raw_subjects);
+        // $raw_subjects = $archon->getSubjects();
+        // $subjects = new ArchonSubjects($raw_subjects);
 
-        $raw_classifications = $archon->getClassifications();
-        $classifications = new ArchonClassifications($raw_classifications);
+        // $raw_classifications = $archon->getClassifications();
+        // $classifications = new ArchonClassifications($raw_classifications);
 
-        $raw_accessions = $archon->getAccessions();
-        $accessions = new ArchonAccessions($raw_accessions);
+        // $raw_accessions = $archon->getAccessions();
+        // $accessions = new ArchonAccessions($raw_accessions);
         
-        $raw_digital_objects = $archon->getDigitalObjects();
-        $digital_objects = new ArchonDigitalObjects($raw_digital_objects);
+        // $raw_digital_objects = $archon->getDigitalObjects();
+        // $digital_objects = new ArchonDigitalObjects($raw_digital_objects);
 
-        $raw_digital_files = $archon->getDigitalFiles();
-        $digital_files = new ArchonDigitalFiles($raw_digital_files);
+        // $raw_digital_files = $archon->getDigitalFiles();
+        // $digital_files = new ArchonDigitalFiles($raw_digital_files);
 
-        $archon->getAllDigitalFiles();
+        // $archon->getAllDigitalFiles();
 
         $exportAccessionData = $archon->exportAccessionDataAtom();
         $atom_accession = new AtomAccessions($exportAccessionData);

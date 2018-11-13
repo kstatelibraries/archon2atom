@@ -73,8 +73,8 @@ class ArchonConnection
         $cookies = $this->client->getConfig('cookies');
         $cookie_data = $cookies->toArray();
         $this->archon_session = $cookie_data[0]['Value'];
-    }
-
+    
+}
     public function fetchData($endpoint, $batch_start = 1)
     {
         do { 
@@ -216,7 +216,7 @@ class ArchonConnection
         {
             foreach($collection as $data)
             {
-                $collectionContentRecords[$data['ID']] = $this->getCollectionContentRecords($data['ID'])[0];
+                $collectionContentRecords[$data['ID']] = collect($this->getCollectionContentRecords($data['ID']))->collapse()->keyBy('ID')->sortBy('ParentID')->toArray();
             }
         }
 
@@ -328,7 +328,7 @@ class ArchonConnection
                 'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
                 'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
                 'subjects' => collect($this->subjects)->collapse()->keyBy('ID')->sort()->toArray(),
-                'collectionContentData' => collect($this->collectionContentData)->collapse()->keyBy('ID')->sort()->toArray(),
+                'collectionContentData' => collect($this->collectionContentData)->collapse()->keyBy('ID')->sortBy('ParentID')->toArray(),
             ];
 
         return $accessionExportData;
