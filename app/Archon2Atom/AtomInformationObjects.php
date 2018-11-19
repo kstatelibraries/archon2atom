@@ -139,7 +139,8 @@ class AtomInformationObjects
             $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
             $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpArchivistNote;
 
-            $resultingData[] = [
+            // put each collection it it's own bucket ...
+            $resultingData[$record['ID']][] = [
                 'legacyId' => $record['ID'],
                 'parentId' => '',
                 'qubitParentSlug' => '',
@@ -186,8 +187,8 @@ class AtomInformationObjects
                 'physicalObjectName' => $tmpLocationName,
                 'physicalObjectLocation' => $tmpLocation,
                 'physicalObjectType' => 'Box',
-                'alternativeIdentifiers' => '',
-                'alternativeIdentifierLabels' => '',
+                'alternativeIdentifiers' => $record['ID'],
+                'alternativeIdentifierLabels' => 'Archon Collection ID',
                 'eventDates' => $record['InclusiveDates'],
                 'eventTypes' => '',
                 'eventStartDates' => $record['NormalDateBegin'],
@@ -278,7 +279,8 @@ class AtomInformationObjects
 
             $eadLevel = $this->levelsOfDescription($record['EADLevel']);
 
-            $resultingData[] = [
+            // put content into the collection bucket
+            $resultingData[$record['CollectionID']][] = [
                 'legacyId' => $recordID,
                 'parentId' => $parentID,
                 'qubitParentSlug' => '',
@@ -325,8 +327,8 @@ class AtomInformationObjects
                 'physicalObjectName' => '',
                 'physicalObjectLocation' => '',
                 'physicalObjectType' => '',
-                'alternativeIdentifiers' => '',
-                'alternativeIdentifierLabels' => '',
+                'alternativeIdentifiers' => $record['ID'],
+                'alternativeIdentifierLabels' => 'Archon Collection Content ID',
                 'eventDates' => $record['Date'],
                 'eventTypes' => '',
                 'eventStartDates' => '', // N/A
@@ -367,43 +369,23 @@ class AtomInformationObjects
             'eventActors', 'eventActorHistories', 'culture',
             ];
 
+        foreach($data['infoObjects'] as $key => $collection) {
 
-        // Export Collection Level Data
-        $collections = collect($data['infoObjects'])->where("levelOfDescription", 'Collection')->toArray();
-        $series = collect($data['infoObjects'])->where("levelOfDescription", 'Series')->toArray();
-        $subseries = collect($data['infoObjects'])->where("levelOfDescription", 'Subseries')->toArray();
-        $box = collect($data['infoObjects'])->where("levelOfDescription", 'Box')->toArray();
-        $file = collect($data['infoObjects'])->where("levelOfDescription", 'File')->toArray();
-        $item = collect($data['infoObjects'])->where("levelOfDescription", 'Item')->toArray();
-        $blank = $subseries = collect($data['infoObjects'])->where("levelOfDescription", '')->toArray();
+            $filename = sprintf("%03d_information_objects_import_collection.csv", $key);
 
-        $writer_collections = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-collections.csv', 'w+');
-        $writer_collections->insertOne($header['infoObjects']);
-        $writer_collections->insertAll($collections); 
+            $troubleCollections = [
+                115, 132, 168, 176, 185, 199, 203,
+                222, 256, 269, 279, 290, 291, 297,
+                320
+            ];
 
-        $writer_series = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-series.csv', 'w+');
-        $writer_series->insertOne($header['infoObjects']);
-        $writer_series->insertAll($series); 
+            $directory = (in_array($key, $troubleCollections) ? 'issue_collections/' : 'collections/');
 
-        $writer_subseries = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-subseries.csv', 'w+');
-        $writer_subseries->insertOne($header['infoObjects']);
-        $writer_subseries->insertAll($subseries); 
+            $writer = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/' . $directory . $filename, 'w+');
+            $writer->insertOne($header['infoObjects']);
+            $writer->insertAll($collection);
+        }
 
-        $writer_box = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-box.csv', 'w+');
-        $writer_box->insertOne($header['infoObjects']);
-        $writer_box->insertAll($box); 
-
-        $writer_file = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-file.csv', 'w+');
-        $writer_file->insertOne($header['infoObjects']);
-        $writer_file->insertAll($file); 
-
-        $writer_item = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-item.csv', 'w+');
-        $writer_item->insertOne($header['infoObjects']);
-        $writer_item->insertAll($item); 
-
-        $writer_blank = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/information_objects_import-blank.csv', 'w+');
-        $writer_blank->insertOne($header['infoObjects']);
-        $writer_blank->insertAll($blank); 
     }
 
     protected function descriptiveRules($ruleID)
