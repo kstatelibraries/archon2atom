@@ -286,7 +286,7 @@ class AtomInformationObjects
                 'qubitParentSlug' => '',
                 'identifier' => '', // Do not have a unique ID ...
                 'accessionNumber' => '', // Does not have one
-                'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['Title']),
+                'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['UniqueID'] . ': ' .  $record['Title']),
                 'levelOfDescription' => ($eadLevel != '' ? $eadLevel : (strpos($record['UniqueID'], 'Box') !== false ? 'Box' : '')),
                 'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',

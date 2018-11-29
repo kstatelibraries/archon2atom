@@ -285,7 +285,7 @@ class ArchonConnection
         return $accessionExportData;
     }
 
-     public function exportInformationObjectsDataAtom()
+    public function exportInformationObjectsDataAtom()
     {
         if($this->enumExtentUnits == null)
         {
@@ -322,15 +322,51 @@ class ArchonConnection
             $this->getAllCollectionContentRecords();
         }
 
+        $sorting_insructions = [
+            ['column'=>'ParentID', 'order'=>'asc'],
+            ['column'=>'SortOrder', 'order'=>'asc'],
+        ];
+
+        $sortedCollectionContentData = $this->multiPropertySort(collect($this->collectionContentData)->collapse()->keyBy('ID'), $sorting_insructions);
+
         $accessionExportData =
+
             [
                 'collectionData' => collect($this->collectionData)->collapse()->keyBy('ID')->sort()->toArray(),
                 'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
                 'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
                 'subjects' => collect($this->subjects)->collapse()->keyBy('ID')->sort()->toArray(),
-                'collectionContentData' => collect($this->collectionContentData)->collapse()->keyBy('ID')->sortBy('ParentID')->toArray(),
+                'collectionContentData' => $sortedCollectionContentData->toArray(),
             ];
 
         return $accessionExportData;
+    }
+
+
+
+    // https://stackoverflow.com/questions/47319120/how-do-i-sort-a-laravel-collection-by-multiple-properties-with-both-asc-and-desc
+    public static function multiPropertySort(\Illuminate\Support\Collection $collection, array $sorting_instructions)
+    {
+        return $collection->sort(function ($a, $b) use ($sorting_instructions)
+        {
+            foreach($sorting_instructions as $sorting_instruction){
+
+                $a[$sorting_instruction['column']] = (isset($a[$sorting_instruction['column']])) ? $a[$sorting_instruction['column']] : '';
+                $b[$sorting_instruction['column']] = (isset($b[$sorting_instruction['column']])) ? $b[$sorting_instruction['column']] : '';
+
+                if(empty($sorting_instruction['order']) or strtolower($sorting_instruction['order']) == 'asc')
+                {
+                    $x = ($a[$sorting_instruction['column']] <=> $b[$sorting_instruction['column']]);
+                } else {
+                    $x = ($b[$sorting_instruction['column']] <=> $a[$sorting_instruction['column']]);
+                }
+
+                if($x != 0)
+                {
+                    return $x;
+                }
+            }
+            return 0;
+        });
     }
 }
