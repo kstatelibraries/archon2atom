@@ -277,7 +277,7 @@ class AtomInformationObjects
                 }
             }
 
-            $eadLevel = $this->levelsOfDescription($record['EADLevel']);
+            $eadLevel = $this->levelsOfDescription($record['UniqueID']);
 
             // put content into the collection bucket
             $resultingData[$record['CollectionID']][] = [
@@ -287,7 +287,7 @@ class AtomInformationObjects
                 'identifier' => '', // Do not have a unique ID ...
                 'accessionNumber' => '', // Does not have one
                 'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['UniqueID'] . ': ' .  $record['Title']),
-                'levelOfDescription' => ($eadLevel != '' ? $eadLevel : (strpos($record['UniqueID'], 'Box') !== false ? 'Box' : '')),
+                'levelOfDescription' => $eadLevel,
                 'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',
                 'archivalHistory' => '', // N/A
@@ -411,25 +411,69 @@ class AtomInformationObjects
         }
     }
 
+    // Use the Unique ID value from Archon
     protected function levelsOfDescription($level)
     {
-        switch(strtolower($level))
+        if( strpos($level, 'Box') !== false )
         {
-            case 'file':
-                return 'File';
-                break;
-            case 'item':
-                return 'Item';
-                break;
-            case 'series':
-                return 'Series';
-                break;
-            case 'subseries':
-                return 'Subseries';
-                break;
-            default:
-                return '';
-                break;
+            return 'Box';
         }
+
+        if( strpos($level, 'CD') !== false )
+        {
+            return 'CD';
+        }
+
+        if( strpos($level, 'Digital content') !== false )
+        {
+            return 'Digital Content';
+        }
+
+        if( strpos($level, 'Drawer') !== false )
+        {
+            return 'Drawer';
+        }
+
+        if( strpos($level, 'DVD') !== false )
+        {
+            return 'DVD';
+        }
+
+        if( strpos($level, 'Folder') !== false )
+        {
+            return 'Folder';
+        }
+
+        if( strpos($level, 'Item') !== false )
+        {
+            return 'Item';
+        }
+
+        if( strpos($level, 'Microfilm reel') !== false )
+        {
+            return 'Microfilm reel';
+        }
+
+        if( strpos($level, 'Photograph') !== false )
+        {
+            return 'Photograph';
+        }
+
+        if( strpos($level, 'Series') !== false )
+        {
+            return 'Series';
+        }
+
+        if( strpos($level, 'Item') !== false )
+        {
+            return 'Item';
+        }
+
+        if( strpos($level, 'Sub-Series') !== false )
+        {
+            return 'Subseries';
+        }
+
+        return '';
     }
 }
