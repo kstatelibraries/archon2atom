@@ -277,8 +277,6 @@ class AtomInformationObjects
                 }
             }
 
-            $eadLevel = $this->levelsOfDescription($record['UniqueID']);
-
             // put content into the collection bucket
             $resultingData[$record['CollectionID']][] = [
                 'legacyId' => $recordID,
@@ -287,7 +285,7 @@ class AtomInformationObjects
                 'identifier' => '', // Do not have a unique ID ...
                 'accessionNumber' => '', // Does not have one
                 'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['UniqueID'] . ': ' .  $record['Title']),
-                'levelOfDescription' => $eadLevel,
+                'levelOfDescription' => $record['EADLevel'],
                 'extentAndMedium' => '', // N/A
                 'repository' => 'Morse Department of Special Collections',
                 'archivalHistory' => '', // N/A
@@ -409,71 +407,5 @@ class AtomInformationObjects
                 return '';
                 break;                                
         }
-    }
-
-    // Use the Unique ID value from Archon
-    protected function levelsOfDescription($level)
-    {
-        if( strpos($level, 'Box') !== false )
-        {
-            return 'Box';
-        }
-
-        if( strpos($level, 'CD') !== false )
-        {
-            return 'CD';
-        }
-
-        if( strpos($level, 'Digital content') !== false )
-        {
-            return 'Digital Content';
-        }
-
-        if( strpos($level, 'Drawer') !== false )
-        {
-            return 'Drawer';
-        }
-
-        if( strpos($level, 'DVD') !== false )
-        {
-            return 'DVD';
-        }
-
-        if( strpos($level, 'Folder') !== false )
-        {
-            return 'Folder';
-        }
-
-        if( strpos($level, 'Item') !== false )
-        {
-            return 'Item';
-        }
-
-        if( strpos($level, 'Microfilm reel') !== false )
-        {
-            return 'Microfilm reel';
-        }
-
-        if( strpos($level, 'Photograph') !== false )
-        {
-            return 'Photograph';
-        }
-
-        if( strpos($level, 'Series') !== false )
-        {
-            return 'Series';
-        }
-
-        if( strpos($level, 'Item') !== false )
-        {
-            return 'Item';
-        }
-
-        if( strpos($level, 'Sub-Series') !== false )
-        {
-            return 'Subseries';
-        }
-
-        return '';
     }
 }
