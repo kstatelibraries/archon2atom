@@ -149,7 +149,7 @@ class AtomInformationObjects
                 'title' => $record['Title'],
                 'levelOfDescription' => 'Collection',
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
-                'repository' => 'Morse Department of Special Collections',
+                'repository' => 'Richard L. D. and Marjorie J. Morse Department of Special Collections',
                 'archivalHistory' => $record['CustodialHistory'],
                 'acquisition' => $record['AcquisitionSource'],
                 'scopeAndContent' => $record['Scope'],
@@ -287,7 +287,7 @@ class AtomInformationObjects
                 'title' => ($record['Title'] == '' ? $record['UniqueID'] : $record['UniqueID'] . ': ' .  $record['Title']),
                 'levelOfDescription' => $record['EADLevel'],
                 'extentAndMedium' => '', // N/A
-                'repository' => 'Morse Department of Special Collections',
+                'repository' => 'Richard L. D. and Marjorie J. Morse Department of Special Collections',
                 'archivalHistory' => '', // N/A
                 'acquisition' => '', // N/A
                 'scopeAndContent' => '', // N/A

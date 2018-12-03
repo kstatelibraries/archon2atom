@@ -14,6 +14,7 @@ class ArchonConnection
     protected $enumExtentUnits;
     protected $enumProcessingPriorities;
     protected $creators;
+    protected $creatorSources;
     protected $enumMaterialTypes;
     protected $accessionData;
     protected $subjects;
@@ -118,7 +119,8 @@ class ArchonConnection
 
     public function getCreatorSources()
     {
-        return $this->fetchData(self::ENUM_CREATOR_SOURCES_ENDPOINT, 1);
+        $this->creatorSources = $this->fetchData(self::ENUM_CREATOR_SOURCES_ENDPOINT, 1);
+        return $this->creatorSources;
     }
 
     public function getExtentUnits()
@@ -342,7 +344,26 @@ class ArchonConnection
         return $accessionExportData;
     }
 
+    public function exportAuthorityRecordsDataAtom()
+    {
+        if($this->creators == null)
+        {
+            $this->getCreators();
+        }
 
+        if($this->creatorSources == null)
+        {
+            $this->getCreatorSources();
+        }
+
+        $authorityRecordsData =
+            [
+                'creatorData' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
+                'creatorSourceData' => collect($this->creatorSources)->collapse()->keyBy('ID')->sort()->toArray(),
+            ];
+
+        return $authorityRecordsData;
+    }
 
     // https://stackoverflow.com/questions/47319120/how-do-i-sort-a-laravel-collection-by-multiple-properties-with-both-asc-and-desc
     public static function multiPropertySort(\Illuminate\Support\Collection $collection, array $sorting_instructions)
