@@ -91,19 +91,19 @@ class AtomInformationObjects
                     {
                         $tmpCreators = sprintf('%s', $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
-                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
-                        $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                        // $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        // $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
+                        // $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+                        // $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     } else {
                         $tmpCreators = sprintf('%s|%s',
                             $tmpCreators, $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
-                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+                        // $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        // $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
+                        // $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
 
-                        $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                        // $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     }
                     $j++;
                     $creatorText = '';
@@ -194,7 +194,7 @@ class AtomInformationObjects
                 'eventStartDates' => $record['NormalDateBegin'],
                 'eventEndDates' => $record['NormalDateEnd'],
                 'eventActors' => $tmpCreators,
-                'eventActorHistories' => $tmpHistory,
+                'eventActorHistories' => '', //$tmpHistory,
                 'culture' => 'en',
             ];
 
@@ -235,19 +235,19 @@ class AtomInformationObjects
                     {    
                         $tmpCreators = sprintf('%s', $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
-                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
-                        $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                        // $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Author: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                        // $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
+                        // $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+                        // $tmpHistory = sprintf("%s%s%s", $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     } else {
                         $tmpCreators = sprintf('%s|%s', 
                             $tmpCreators, $creatorText);
 
-                        $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
-                        $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
-                        $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
+                    //     $tmpBiogHistAuthor = ($data['creators'][$creator]['BiogHistAuthor'] == '' ? '' : 'Biography History Authory: ' . $data['creators'][$creator]['BiogHistAuthor'] . "\r\n");
+                    //     $tmpBiogHist = ($data['creators'][$creator]['BiogHist'] == '' ? '' : 'Biography History: ' . $data['creators'][$creator]['BiogHist'] . "\r\n");
+                    //     $tmpBiogSources = ($data['creators'][$creator]['Sources'] == '' ? '' : 'Sources: ' . $data['creators'][$creator]['Sources']);
 
-                        $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
+                    //     $tmpHistory = sprintf("%s|%s%s%s", $tmpHistory, $tmpBiogHistAuthor, $tmpBiogHist, $tmpBiogSources);
                     }
                     $j++;
                     $creatorText = '';
@@ -332,7 +332,7 @@ class AtomInformationObjects
                 'eventStartDates' => '', // N/A
                 'eventEndDates' => '', // N/A
                 'eventActors' => $tmpCreators,
-                'eventActorHistories' => $tmpHistory,
+                'eventActorHistories' => '', // $tmpHistory,
                 'culture' => 'en',
             ];
 
@@ -373,8 +373,7 @@ class AtomInformationObjects
 
             $troubleCollections = [
                 115, 132, 168, 176, 185, 199, 203,
-                222, 256, 269, 279, 290, 291, 297,
-                320
+                222, 256, 269, 279, 290, 291, 320,
             ];
 
             $directory = (in_array($key, $troubleCollections) ? 'issue_collections/' : 'collections/');
