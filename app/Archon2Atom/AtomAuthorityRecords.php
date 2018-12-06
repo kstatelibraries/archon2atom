@@ -81,7 +81,7 @@ class AtomAuthorityRecords
 
                 foreach($creator['CreatorRelationships'] as $relationship)
                 {
-                    $resultingData['authorityRecordsRelationships'][] = [
+                    $relationships['authorityRecordsRelationships'][] = [
                         'sourceAuthorizedFormOfName' => $creator['Name'],
                         'targetAuthorizedFormOfName' => $data['creatorData'][$relationship['RelatedCreatorID']]['Name'],
                         'category' => $this->creatorRelationshipMapping($relationship['CreatorRelationshipTypeID']),
@@ -96,6 +96,69 @@ class AtomAuthorityRecords
 
         }
 
+            $collectionRelationships = collect($relationships)->collapse();
+
+            $protectedIds = [];
+            foreach($collectionRelationships as $id => $relationship)
+            {
+                foreach ($collectionRelationships as $matchId => $match)
+                {
+                    $remove = false;
+
+                    if($relationship['sourceAuthorizedFormOfName'] == $match['targetAuthorizedFormOfName'] &&
+                        $relationship['targetAuthorizedFormOfName'] == $match['sourceAuthorizedFormOfName'])
+                    {
+                        $remove = false;
+
+                        // is the superior of   is the subordinate of
+                        if($relationship['category'] == 'is the superior of' && $match['category'] == 'is the subordinate of')
+                        {
+                            $remove = true;
+                        }
+
+                        // is the subordinate of   is the superior of
+                        if($relationship['category'] == 'is the subordinate of' && $match['category'] == 'is the superior of')
+                        {
+                            // $remove = true;
+                        }
+
+                        // family  is the superior of
+                        if($relationship['category'] == 'family' && $match['category'] == 'is the superior of')
+                        {
+                            // do not remove, unique relationship ...
+                            // $remove = true;
+                        }
+
+                        // family  family
+                        if($relationship['category'] == 'family' && $match['category'] == 'family')
+                        {
+                            $remove = true;
+                        }
+
+                        // is the superior of  family
+                        if($relationship['category'] == 'is the superior of' && $match['category'] == 'family')
+                        {
+                            // do not remove, unique relationship ...
+                            // $remove = true;
+                        }
+
+                        // associative associative
+                        if($relationship['category'] == 'associative' && $match['category'] == 'associative')
+                        {
+                            $remove = true;
+                        }
+
+                        if($remove && !in_array($matchId, $protectedIds))
+                        {
+                            $protectedIds[] = $id;
+                            $collectionRelationships->forget($matchId);
+                        }
+
+                    }
+                }
+            }
+
+        $resultingData['authorityRecordsRelationships'] = $collectionRelationships->toArray();
         $outputData['authorityRecords'] = $resultingData;
 
         return $outputData;
