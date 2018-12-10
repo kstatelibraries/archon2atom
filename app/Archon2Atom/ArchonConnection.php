@@ -365,6 +365,42 @@ class ArchonConnection
         return $authorityRecordsData;
     }
 
+
+/*
+ * Belfor Data
+ */
+    public function exportAccessionDataBelfor()
+    {
+
+        if($this->accessionData == null)
+        {
+            $this->getAccessions();
+        }
+
+        $accessionExportData =
+            [
+                'accessionData' => collect($this->accessionData)->collapse()->keyBy('ID')->sort()->toArray(),
+            ];
+
+        return $accessionExportData;
+    }
+
+    public function exportInformationObjectsDataBelfor()
+    {
+
+        if($this->collectionData == null)
+        {
+            $this->getCollectionRecords();
+        }
+
+        $infoObjectsExportData =
+
+            [
+                'collectionData' => collect($this->collectionData)->collapse()->keyBy('ID')->sort()->toArray(),
+            ];
+
+        return $infoObjectsExportData;
+    }
     // https://stackoverflow.com/questions/47319120/how-do-i-sort-a-laravel-collection-by-multiple-properties-with-both-asc-and-desc
     public static function multiPropertySort(\Illuminate\Support\Collection $collection, array $sorting_instructions)
     {
