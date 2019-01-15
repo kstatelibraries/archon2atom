@@ -173,7 +173,11 @@ class AtomInformationObjects
                 'relatedUnitsOfDescription' => $record['RelatedMaterials'],
                 'publicationNote' => $record['PublicationNote'],
                 'digitalObjectURI' => '',
-                'generalNote' => $record['OtherNote'],
+                'generalNote' => $this->mergeGeneralNotes(
+                    $record['OtherNote'],
+                    $record['SeparatedMaterials'],
+                    $record['PreferredCitation']
+                ),
                 'subjectAccessPoints' => $tmpSubjects, // need to build
                 'placeAccessPoints' => '',
                 'nameAccessPoints' => '',
@@ -411,6 +415,32 @@ class AtomInformationObjects
                 return '';
                 break;                                
         }
+    }
+
+    protected function mergeGeneralNotes( $otherNote, $separatedMaterials,
+        $preferredCitation )
+    {
+        if($otherNote == '' && $separatedMaterials == ''
+            && $preferredCitation == '')
+        {
+            return '';
+        }
+        if($otherNote !== '')
+        {
+            $generalNote[] = $otherNote . "\r\n";
+        }
+
+        if($separatedMaterials !== '')
+        {
+            $generalNote[] = 'Separated Materials: ' . $separatedMaterials . "\r\n";
+        }
+
+        if($preferredCitation !== '')
+        {
+            $generalNote[] = 'Preferred Citation: ' . $preferredCitation . "\r\n";
+        }
+
+        return implode('|', $generalNote);
     }
 
     protected function getAccessions($haystack)
