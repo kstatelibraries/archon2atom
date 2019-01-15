@@ -32,6 +32,10 @@ class AtomInformationObjects
             $tmpPublicationDate = '';
             $tmpArchivistNote = '';
             $tmpCreators = '';
+            $tmpAcqusitionDate = '';
+            $tmpAcqusitionMethod = '';
+            $tmpAcqusitionSource = '';
+            $tmpAcqusition = '';
             $tmpReleatedMaterials = '';
             $tmpRelatedMaterialsURL = '';
             $tmpRelatedPubs = '';
@@ -140,6 +144,10 @@ class AtomInformationObjects
                 }
             }
 
+            $tmpAcqusitionDate = ($record['AcquisitionDate'] == '' ? '' : 'Acqusition Date: ' . $record['AcquisitionDate'] . "\r\n");
+            $tmpAcqusitionMethod = ($record['AcquisitionMethod'] == '' ? '' : 'Acqusition Method: ' . $record['AcquisitionMethod'] . "\r\n");
+            $tmpAcqusitionSource = ($record['AcquisitionSource'] == '' ? '' : 'Acqusition Source: ' . $record['AcquisitionSource'] . "\r\n");
+            $tmpAcqusition = $tmpAcqusitionSource . $tmpAcqusitionMethod . $tmpAcqusitionDate;
 
 
             $tmpFindingAidAuthor = ($record['FindingAidAuthor'] == '' ? '' : 'Finding Aid Author: ' . $record['FindingAidAuthor'] . "\r\n");
@@ -164,7 +172,7 @@ class AtomInformationObjects
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
                 'repository' => 'Richard L. D. and Marjorie J. Morse Department of Special Collections',
                 'archivalHistory' => $record['CustodialHistory'],
-                'acquisition' => $record['AcquisitionSource'],
+                'acquisition' => $tmpAcqusition,
                 'scopeAndContent' => $record['Scope'],
                 'appraisal' => $record['AppraisalInfo'],
                 'accruals' => $record['AccrualInfo'],
