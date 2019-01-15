@@ -32,6 +32,10 @@ class AtomInformationObjects
             $tmpPublicationDate = '';
             $tmpArchivistNote = '';
             $tmpCreators = '';
+            $tmpBiogHistAuthor = '';
+            $tmpBiogHist = '';
+            $tmpBiogSources = '';
+            $tmpHistory = '';
             $i = 0;
 
             if(isset($record['Locations']))
@@ -74,11 +78,6 @@ class AtomInformationObjects
                     $extentUnitString = '';
                 }
             }
-
-            $tmpBiogHistAuthor = '';
-            $tmpBiogHist = '';
-            $tmpBiogSources = '';
-            $tmpHistory = '';
 
             $j = 0;
             if(isset($record['Creators']))
