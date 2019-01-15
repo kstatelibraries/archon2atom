@@ -4,6 +4,7 @@ namespace App\Archon2Atom;
 
 use League\Csv\Writer;
 use Carbon\Carbon;
+use Archon\Languages;
 
 class AtomInformationObjects
 {
@@ -18,6 +19,9 @@ class AtomInformationObjects
     {
 
         // loop through collection data first generating the top level hierarchy
+
+        // Retreive Languages for All Collections
+        $archonLanguages = new ArchonLanguages();
 
         foreach ($data['collectionData'] as $record)
         {
@@ -164,7 +168,7 @@ class AtomInformationObjects
                 'arrangement' => $record['Arrangement'],
                 'accessConditions' => $record['AccessRestrictions'],
                 'reproductionConditions' => $record['UseRestrictions'],
-                'language' => '',
+                'language' => $archonLanguages->getLanguagesForCollectionID($record['ID']),
                 'script' => '',
                 'languageNote' => '',
                 'physicalCharacteristics' => '',
