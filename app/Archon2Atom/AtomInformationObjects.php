@@ -32,6 +32,10 @@ class AtomInformationObjects
             $tmpPublicationDate = '';
             $tmpArchivistNote = '';
             $tmpCreators = '';
+            $tmpReleatedMaterials = '';
+            $tmpRelatedMaterialsURL = '';
+            $tmpRelatedPubs = '';
+            $tmpRelatedUnitsOfDescription = '';
             $tmpBiogHistAuthor = '';
             $tmpBiogHist = '';
             $tmpBiogSources = '';
@@ -143,6 +147,11 @@ class AtomInformationObjects
             $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
             $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpPublicationDate;
 
+            $tmpReleatedMaterials = ($record['RelatedMaterials'] == '' ? '' : 'Related Materials: ' . $record['RelatedMaterials'] . "\r\n");
+            $tmpRelatedMaterialsURL = ($record['RelatedMaterialsURL'] == '' ? '' : 'Related Materials URL: ' . $record['RelatedMaterialsURL'] . "\r\n");
+            $tmpRelatedPubs = ($record['RelatedPublications'] == '' ? '' : 'Related Publications: ' . $record['RelatedPublications'] . "\r\n");
+            $tmpRelatedUnitsOfDescription = $tmpReleatedMaterials . $tmpRelatedMaterialsURL . $tmpRelatedPubs;
+
             // put each collection it it's own bucket ...
             $resultingData[$record['ID']][] = [
                 'legacyId' => $record['ID'],
@@ -169,7 +178,7 @@ class AtomInformationObjects
                 'findingAids' => $record['PublicationNote'],
                 'locationOfOriginals' => '' , // blank in our data
                 'locationOfCopies' => '', // blank in our data
-                'relatedUnitsOfDescription' => $record['RelatedMaterials'],
+                'relatedUnitsOfDescription' => $tmpRelatedUnitsOfDescription,
                 'publicationNote' => $record['PublicationNote'],
                 'digitalObjectURI' => '',
                 'generalNote' => $this->mergeGeneralNotes(
