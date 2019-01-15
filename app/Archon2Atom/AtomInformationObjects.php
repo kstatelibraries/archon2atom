@@ -52,7 +52,7 @@ class AtomInformationObjects
                             $tmpLocation = 'Annex';
                         } else {
                             $tmpLocationName = $location['Content'];
-                            $tmpLocation = sprintf('%s:R%s/S%s/Sf%s; %s, %s',
+                            $tmpLocation = sprintf('2018, %s:R%s/S%s/Sf%s; %s, %s',
                                 $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf'],$location['Content'], $extentUnitString);
                         }
 
@@ -65,7 +65,7 @@ class AtomInformationObjects
                             $tmpLocation = sprintf('%s|Annex', $tmpLocation);
                         } else {
                             $tmpLocationName = sprintf('%s|%s', $tmpLocationName, $location['Content']);
-                            $tmpLocation = sprintf('%s|%s:R%s/S%s/Sf%s; %s, %s',
+                            $tmpLocation = sprintf('%s|2018, %s:R%s/S%s/Sf%s; %s, %s',
                                 $tmpLocation, $location['Location'], $location['RangeValue'], $location['Section'],$location['Shelf'],$location['Content'], $extentUnitString);
                         }
                     }
