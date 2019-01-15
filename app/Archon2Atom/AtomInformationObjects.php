@@ -137,11 +137,6 @@ class AtomInformationObjects
                 }
             }
 
-            $accessionIds = [];
-            $accessionFromCustodialHistory = preg_match_all('/(?:([UupP]{1}\d{4}\.\d{1,3})|(\d{4}-\d{2}\.\d{1,3}))/', $record['CustodialHistory'], $accessionIds,PREG_SET_ORDER);
-            $accessions = collect($accessionIds)->collapse()->unique()->filter(function ($value) {
-                return $value != '';
-            })->toArray();
 
 
             $tmpFindingAidAuthor = ($record['FindingAidAuthor'] == '' ? '' : 'Finding Aid Author: ' . $record['FindingAidAuthor'] . "\r\n");
@@ -155,7 +150,7 @@ class AtomInformationObjects
                 'parentId' => '',
                 'qubitParentSlug' => '',
                 'identifier' => '', //$record['ID'],
-                'accessionNumber' => implode('|',$accessions),
+                'accessionNumber' => $this->getAccessions($record['CustodialHistory']),
                 'title' => $record['Title'],
                 'levelOfDescription' => 'Collection',
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
@@ -416,5 +411,24 @@ class AtomInformationObjects
                 return '';
                 break;                                
         }
+    }
+
+    protected function getAccessions($haystack)
+    {
+        $accessionIds = [];
+        $accessionFromCustodialHistory = preg_match_all(
+            '/(?:([UupP]{1}\d{4}\.\d{1,3})|(\d{4}-\d{2}\.\d{1,3}))/',
+            $haystack,
+            $accessionIds,
+            PREG_SET_ORDER
+        );
+
+        $accessions = collect($accessionIds)->collapse()->unique()->filter(
+            function ($value) {
+                return $value != '';
+            }
+        )->toArray();
+
+        return implode('|',$accessions);
     }
 }
