@@ -142,7 +142,7 @@ class AtomInformationObjects
             $tmpFindingAidAuthor = ($record['FindingAidAuthor'] == '' ? '' : 'Finding Aid Author: ' . $record['FindingAidAuthor'] . "\r\n");
             $tmpProcessingInfo = ($record['ProcessingInfo'] == '' ? '' : 'Processing Info: ' . $record['ProcessingInfo'] . "\r\n");
             $tmpPublicationDate = ($record['PublicationDate'] == '' ? '' : 'Publication Date: ' .  Carbon::createFromFormat('Ymd', $record['PublicationDate'], 'UTC')->toDateString());
-            $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpArchivistNote;
+            $tmpArchivistNote = $tmpFindingAidAuthor . $tmpProcessingInfo . $tmpPublicationDate;
 
             // put each collection it it's own bucket ...
             $resultingData[$record['ID']][] = [
