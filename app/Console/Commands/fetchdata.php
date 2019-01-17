@@ -27,6 +27,7 @@ use App\Archon2Atom\AtomAccessions;
 use App\Archon2Atom\AtomInformationObjects;
 use App\Archon2Atom\AtomRepositoryData;
 use App\Archon2Atom\AtomAuthorityRecords;
+use App\Archon2Atom\ArchonAdditionalData;
 
 class fetchdata extends Command
 {
@@ -133,5 +134,15 @@ class fetchdata extends Command
         $exportAuthorityData = $archon->exportAuthorityRecordsDataAtom();
         $atom_authority_records = new AtomAuthorityRecords($exportAuthorityData);
 
+        $archonAdditionalData = new ArchonAdditionalData(
+            'OtherURL',
+            'PredominantDates',
+            'Abstract',
+            'AltExtentStatement',
+            'PhysicalAccess',
+            'TechnicalAccess',
+            'BiogHist',
+            'BiogHistAuthor'
+        );
     }
 }
