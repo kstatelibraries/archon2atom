@@ -131,7 +131,7 @@ class AtomInformationObjects
                 'parentId' => '',
                 'qubitParentSlug' => '',
                 'identifier' => '', //$record['ID'],
-                'accessionNumber' => $this->getAccessions($record['CustodialHistory']),
+                'accessionNumber' => $this->getAccessions($record['CustodialHistory'],$record['CollectionIdentifier']),
                 'title' => $record['Title'],
                 'levelOfDescription' => 'Collection',
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits']) ? $record['Extent'] . ' ' . $data['extentUnits'][$record['ExtentUnitID']]['ExtentUnit'] : ''),
@@ -148,11 +148,11 @@ class AtomInformationObjects
                 'script' => '',
                 'languageNote' => '',
                 'physicalCharacteristics' => '',
-                'findingAids' => $record['PublicationNote'],
+                'findingAids' => '',
                 'locationOfOriginals' => '' , // blank in our data
                 'locationOfCopies' => '', // blank in our data
                 'relatedUnitsOfDescription' => $tmpRelatedUnitsOfDescription,
-                'publicationNote' => $record['PublicationNote'],
+                'publicationNote' => '',
                 'digitalObjectURI' => '',
                 'generalNote' => $this->mergeGeneralNotes(
                     $record['OtherNote'],
@@ -389,15 +389,19 @@ class AtomInformationObjects
         return implode('|', $generalNote);
     }
 
-    protected function getAccessions($haystack)
+    protected function getAccessions(...$haystack)
     {
         $accessionIds = [];
-        $accessionFromCustodialHistory = preg_match_all(
-            '/(?:([UupP]{1}\d{4}\.\d{1,3})|(\d{4}-\d{2}\.\d{1,3}))/',
-            $haystack,
-            $accessionIds,
-            PREG_SET_ORDER
-        );
+
+        foreach($haystack as $identifier)
+        {
+            $accessionFromData = preg_match_all(
+                '/(?:([UupP]{1}\d{4}\.\d{1,3})|(\d{4}-\d{2}\.\d{1,3}))/',
+                $identifier,
+                $accessionIds,
+                PREG_SET_ORDER
+            );
+        }
 
         $accessions = collect($accessionIds)->collapse()->unique()->filter(
             function ($value) {
