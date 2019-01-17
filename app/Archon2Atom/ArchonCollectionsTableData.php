@@ -12,7 +12,7 @@ namespace App\Archon2Atom;
 use Illuminate\Support\Facades\DB;
 use League\Csv\Writer;
 
-class ArchonAdditionalData
+class ArchonCollectionsTableData
 {
     public function __construct(...$columnsToSearch)
     {
