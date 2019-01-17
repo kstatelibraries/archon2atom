@@ -32,7 +32,7 @@ class AtomAuthorityRecords
                 'authorizedFormOfName' => $creator['Name'],
                 'corporateBodyIdentifiers' => '',
                 'datesOfExistence' => $creator['Dates'],
-                'history' => $creator['BiogHist'],
+                'history' => str_replace("\n", "\r\n",$creator['BiogHist']),
                 'places' => '',
                 'legalStatus' => '',
                 'functions' => '',
