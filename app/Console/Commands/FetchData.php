@@ -29,7 +29,7 @@ use App\Archon2Atom\AtomRepositoryData;
 use App\Archon2Atom\AtomAuthorityRecords;
 use App\Archon2Atom\ArchonCollectionsTableData;
 
-class fetchdata extends Command
+class FetchData extends Command
 {
     /**
      * The name and signature of the console command.

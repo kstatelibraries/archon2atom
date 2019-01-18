@@ -7,7 +7,7 @@ use App\Archon2Atom\ArchonConnection;
 use App\Archon2Atom\BelforAccessions;
 use App\Archon2Atom\BelforInformationObjects;
 
-class belfordata extends Command
+class BelforData extends Command
 {
     /**
      * The name and signature of the console command.
@@ -48,6 +48,5 @@ class belfordata extends Command
 
         $exportInformationObjectsData = $archon->exportInformationObjectsDataBelfor();
         $belfor_information_objects = new BelforInformationObjects($exportInformationObjectsData);
-
     }
 }
