@@ -54,8 +54,8 @@ class ArchonLanguages
                 return 'ar';
                 break;
             case 2051:
-                // Creolesandpidgins,French-based(Other) - cpf -- cr 
-                return 'cr';
+                // Creolesandpidgins,French-based(Other) - cpf -- cr
+                return 'crp';
                 break;
             case 2061:
                 // Danish - dan -- da
