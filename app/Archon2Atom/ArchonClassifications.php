@@ -14,21 +14,18 @@ class ArchonClassifications
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'classificationID' => $record['ID'],
                         'ParentID' => $record['ParentID'],
                         'ClassificationIdentifier' => $record['ClassificationIdentifier'],
                         'CreatorID' => $record['CreatorID'],
                         'Title' => $record['Title'],
-                        'Description' => $record['Description'],                                                
+                        'Description' => $record['Description'],
                     ];
                 }
             }
@@ -44,7 +41,8 @@ class ArchonClassifications
             'classificationID', 'ParentID', 'ClassificationIdentifier', 'CreatorID', 'Title', 'Description'
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/classifications.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'classifications.csv', 'w+');
         $writer_content->insertOne($header['content']);
         $writer_content->insertAll($data['content']);
     }

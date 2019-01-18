@@ -16,15 +16,11 @@ class ArchonCreators
     public function processData($data)
     {
 
-        foreach ($data as $recordSet)
-        {
-
-            foreach($recordSet as $record) 
-            {
-
+        foreach ($data as $recordSet) {
+            foreach ($recordSet as $record) {
                 $resultingData[] = [
                     'creatorID' => $record['ID'],
-                    'Name' => $record['Name'], 
+                    'Name' => $record['Name'],
                     'NameFullerForm' => $record['NameFullerForm'],
                     'NameVariants' => $record['NameVariants'],
                     'CreatorSourceID' => $record['CreatorSourceID'],
@@ -37,20 +33,24 @@ class ArchonCreators
                     'RepositoryID' => $record['RepositoryID'],
                 ];
 
-                if(isset($record['CreatorRelationships'])){
-                    foreach($record['CreatorRelationships'] as $creator)
-                    {
-                        $creatorrelationships[] = 
+                if (isset($record['CreatorRelationships'])) {
+                    foreach ($record['CreatorRelationships'] as $creator) {
+                        $creatorrelationships[] =
                         [
                             'creatorID' => $record['ID'],
-                            'RelatedCreatorID' => (isset($creator['RelatedCreatorID']) ? $creator['RelatedCreatorID'] : null),
-                            'CreatorRelationshipTypeID' => (isset($creator['CreatorRelationshipTypeID']) ? $creator['CreatorRelationshipTypeID'] : null),
+                            'RelatedCreatorID' => (isset($creator['RelatedCreatorID'])
+                                ? $creator['RelatedCreatorID']
+                                : null
+                            ),
+                            'CreatorRelationshipTypeID' => (isset($creator['CreatorRelationshipTypeID'])
+                                ? $creator['CreatorRelationshipTypeID']
+                                : null
+                            ),
                             'Description' => (isset($creator['Description']) ? $creator['Description'] : null),
                         ];
                     }
                 }
             }
-
         }
 
         $outputData['creators'] = $resultingData;

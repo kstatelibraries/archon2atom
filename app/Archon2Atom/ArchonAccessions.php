@@ -16,15 +16,11 @@ class ArchonAccessions
     public function processData($data)
     {
 
-        foreach ($data as $recordSet)
-        {
-
-            foreach($recordSet as $record) 
-            {
-
+        foreach ($data as $recordSet) {
+            foreach ($recordSet as $record) {
                 $resultingData[] = [
                     'accessionId' => $record['ID'],
-                    'Enabled' => $record['Enabled'], 
+                    'Enabled' => $record['Enabled'],
                     'AccessionDate' => $record['AccessionDate'],
                     'Title' => $record['Title'],
                     'Identifier' => $record['Identifier'],
@@ -46,28 +42,25 @@ class ArchonAccessions
 
                 ];
 
-                foreach($record['Creators'] as $creator)
-                {
-                    $creators[] = 
+                foreach ($record['Creators'] as $creator) {
+                    $creators[] =
                     [
                         'accessionId' => $record['ID'],
                         'creatorID' => $creator,
                     ];
                 }
 
-                foreach($record['Collections'] as $collection)
-                {
-                    $collectionData[] = 
+                foreach ($record['Collections'] as $collection) {
+                    $collectionData[] =
                     [
                         'accessionId' => $record['ID'],
                         'collectionID' => $collection,
                     ];
                 }
 
-                if(isset($record['Locations'])){
-                    foreach($record['Locations'] as $location)
-                    {           
-                        $locationData[] = 
+                if (isset($record['Locations'])) {
+                    foreach ($record['Locations'] as $location) {
+                        $locationData[] =
                         [
                             'accessionId' => $record['ID'],
                             'Location' => $location['Location'],
@@ -82,10 +75,9 @@ class ArchonAccessions
                     }
                 }
 
-                if(isset($record['Subjects'])){
-                    foreach($record['Subjects'] as $subject)
-                    {               
-                        $subjectData[] = 
+                if (isset($record['Subjects'])) {
+                    foreach ($record['Subjects'] as $subject) {
+                        $subjectData[] =
                         [
                             'accessionId' => $record['ID'],
                             'subjectID' => $subject,
@@ -93,10 +85,9 @@ class ArchonAccessions
                     }
                 }
 
-                if(isset($record['Classifications'])){
-                    foreach($record['Classifications'] as $classification)
-                    {               
-                        $classificationData[] = 
+                if (isset($record['Classifications'])) {
+                    foreach ($record['Classifications'] as $classification) {
+                        $classificationData[] =
                         [
                             'accessionId' => $record['ID'],
                             'classificationID' => $classification,
@@ -104,7 +95,6 @@ class ArchonAccessions
                     }
                 }
             }
-
         }
 
         $outputData['accessions'] = $resultingData;
@@ -121,11 +111,13 @@ class ArchonAccessions
     {
 
         $header['accessions'] = [
-            'accessionId', 'Enabled', 'AccessionDate', 'Title', 
-            'Identifier', 'InclusiveDates', 'ReceivedExtent', 'ReceivedExtentUnitID', 
-            'UnprocessedExtent', 'UnprocessedExtentUnitID', 'MaterialTypeID', 'ProcessingPriorityID', 'ExpectedCompletionDate', 
-            'Donor', 'DonorContactInformation', 'DonorNotes', 'PhysicalDescription', 'ScopeContent',
-            'Comments', 'PrimaryCreator', 
+            'accessionId', 'Enabled', 'AccessionDate', 'Title',
+            'Identifier', 'InclusiveDates', 'ReceivedExtent',
+            'ReceivedExtentUnitID', 'UnprocessedExtent',
+            'UnprocessedExtentUnitID', 'MaterialTypeID', 'ProcessingPriorityID',
+            'ExpectedCompletionDate', 'Donor', 'DonorContactInformation',
+            'DonorNotes', 'PhysicalDescription', 'ScopeContent','Comments',
+            'PrimaryCreator',
             ];
         $header['subjects'] = [
             'accessionId', 'subjectID'

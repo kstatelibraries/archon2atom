@@ -16,37 +16,30 @@ class ArchonUsers
     public function processData($data)
     {
 
-        foreach ($data as $recordSet)
-        {
-
-            foreach($recordSet as $record) 
-            {
-
+        foreach ($data as $recordSet) {
+            foreach ($recordSet as $record) {
                 $resultingData[] = [
                     'ID' => $record['ID'],
-                    'Login' => $record['Login'], 
+                    'Login' => $record['Login'],
                     'Email' => $record['Email'],
                     'FirstName' => $record['FirstName'],
                     'LastName' => $record['LastName'],
                     'DisplayName' => $record['DisplayName'],
                     'IsAdminUser' => $record['IsAdminUser'],
                     'RepositoryLimit' => $record['RepositoryLimit'],
-
                 ];
 
-                foreach($record['Usergroups'] as $group)
-                {
-                    $usergroups[] = 
+                foreach ($record['Usergroups'] as $group) {
+                    $usergroups[] =
                     [
                         'userID' => $record['ID'],
                         'groupID' => $group,
                     ];
                 }
 
-                if(isset($record['Repositories'])){
-                    foreach($record['Repositories'] as $repository)
-                    {               
-                        $repositoryData[] = 
+                if (isset($record['Repositories'])) {
+                    foreach ($record['Repositories'] as $repository) {
+                        $repositoryData[] =
                         [
                             'userID' => $record['ID'],
                             'repositoryID' => $repository,
@@ -54,7 +47,6 @@ class ArchonUsers
                     }
                 }
             }
-
         }
 
         $outputData['users'] = $resultingData;
@@ -68,7 +60,7 @@ class ArchonUsers
     {
 
         $header['users'] = [
-            'userID', 'Login', 'Email', 'FirstName', 
+            'userID', 'Login', 'Email', 'FirstName',
             'LastName', 'DisplayName', 'IsAdminUser', 'RepositoryLimit'
             ];
         $header['usergroups'] = [

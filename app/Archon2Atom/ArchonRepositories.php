@@ -14,14 +14,11 @@ class ArchonRepositories
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'repositoryID' => $record['ID'],
                         'Name' => $record['Name'],
@@ -51,11 +48,14 @@ class ArchonRepositories
     public function exportData($data)
     {
         $header['content'] = [
-            'repositoryID', 'Name', 'Code', 'Address', 'Address2', 'City', 'State', 'CountryID', 'ZIPCode', 'ZIPPlusFour', 'Phone', 'PhoneExtension', 'Fax', 'Email', 'URL', 'EmailSignature'
-            ];
+            'repositoryID', 'Name', 'Code', 'Address', 'Address2', 'City',
+            'State', 'CountryID', 'ZIPCode', 'ZIPPlusFour', 'Phone',
+            'PhoneExtension', 'Fax', 'Email', 'URL', 'EmailSignature'
+        ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/repositories.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'repositories.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

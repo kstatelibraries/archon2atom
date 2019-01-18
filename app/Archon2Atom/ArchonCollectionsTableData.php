@@ -16,8 +16,7 @@ class ArchonCollectionsTableData
 {
     public function __construct(...$columnsToSearch)
     {
-        foreach ($columnsToSearch as $column)
-        {
+        foreach ($columnsToSearch as $column) {
             $this->retreiveAdditionalDataByColumn($column);
         }
     }
@@ -26,10 +25,12 @@ class ArchonCollectionsTableData
     {
         $columnsToSelect = ['ID', 'Title', $columnName];
         $csvHeaders = ['CollectionID', 'Title', $columnName];
-        $otherURLRecords = DB::table('tblCollections_Collections')->select($columnsToSelect)->where($columnName, '!=', 'NULL')->get();
+        $otherURLRecords = DB::table('tblCollections_Collections')
+            ->select($columnsToSelect)
+            ->where($columnName, '!=', 'NULL')
+            ->get();
 
-        foreach($otherURLRecords as $record)
-        {
+        foreach ($otherURLRecords as $record) {
             $data[] = collect($record)->toArray();
         }
         
@@ -38,8 +39,9 @@ class ArchonCollectionsTableData
 
     public function exportData($headers, $data, $fileName)
     {
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_import/nonmappedata/';
         $filename = sprintf("%s.csv", $fileName);
-        $writer = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/nonmappedata/' . $filename, 'w+');
+        $writer = Writer::createFromPath($path . $filename, 'w+');
         $writer->insertOne($headers);
         $writer->insertAll($data);
     }

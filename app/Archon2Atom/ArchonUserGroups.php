@@ -14,14 +14,11 @@ class ArchonUserGroups
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'groupID' => $record['ID'],
                         'Usergroup' => $record['Usergroup'],
@@ -29,7 +26,7 @@ class ArchonUserGroups
                 }
             }
         }
-                  
+
         $outputData['content'] = $resultingData;
         return $outputData;
     }
@@ -39,9 +36,10 @@ class ArchonUserGroups
         $header['content'] = [
             'groupID', 'Usergroup',
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_usergroups.csv', 'w+');
+
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_usergroups.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

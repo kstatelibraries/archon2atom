@@ -6,7 +6,6 @@ use GuzzleHttp\Client;
 
 class ArchonConnection
 {
-
     protected $client;
     protected $archon_session;
     protected $collectionData;
@@ -20,10 +19,7 @@ class ArchonConnection
     protected $subjects;
     protected $collectionContentData;
 
-
-
     const ADMIN_LOGIN_ENDPOINT = "?p=core/authenticate";
-
     const ENUM_USER_GROUPS_ENDPOINT = "?p=core/enums&enum_type=usergroups";
     const ENUM_SUBJECT_SOURCES_ENDPOINT = "?p=core/enums&enum_type=subjectsources";
     const ENUM_CREATOR_SOURCES_ENDPOINT = "?p=core/enums&enum_type=creatorsources";
@@ -33,15 +29,13 @@ class ArchonConnection
     const ENUM_PROCESSING_PRIORITIES_ENDPOINT = "?p=core/enums&enum_type=processingpriorities";
     const ENUM_COUNTRIES_ENDPOINT = "?p=core/enums&enum_type=countries";
     const ENUM_CONTAINER_TYPES_ENDPOINT = "?p=core/enums&enum_type=containertypes";
-    /* 
+    /*
     *
     * The following was in ArchivesSpace's export fields, but the data does not exist as an exportable
     * field in archon.
     *
-    */ 
+    */
     #const ENUM_ACCESSION_TYPES_ENDPOINT = "?p=core/enums&enum_type=materialtypes";
-
-
     const REPOSITORY_ENDPOINT = "?p=core/repositories";
     const USER_ENDPOINT = "?p=core/users";
     const SUBJECT_ENDPOINT = "?p=core/subjects";
@@ -56,50 +50,47 @@ class ArchonConnection
 
     public function __construct()
     {
-
         $this->client = new \GuzzleHttp\Client([
             'cookies' => true,
             'base_uri' => env('ARCHON_BASE_URL'),
         ]);
-
         $this->authenticateArchon();
     }
 
-    public function authenticateArchon() 
+    public function authenticateArchon()
     {
-        $auth = $this->client->POST(self::ADMIN_LOGIN_ENDPOINT,[
+        $auth = $this->client->POST(self::ADMIN_LOGIN_ENDPOINT, [
             'auth' => [env('ARCHON_USERNAME'), env('ARCHON_PASSWORD'), 'basic'],
         ]);
 
         $cookies = $this->client->getConfig('cookies');
         $cookie_data = $cookies->toArray();
         $this->archon_session = $cookie_data[0]['Value'];
-    
-}
+    }
+
     public function fetchData($endpoint, $batch_start = 1)
     {
-        do { 
+        do {
             $response = $this->client->GET($endpoint . '&batch_start=' . $batch_start, [
                 'headers' => [
                     'session' => $this->archon_session,
                 ]
             ]);
 
-            if(strpos((string)$response->getBody(), "No matching record") === false) {
-                $data[] = json_decode($response->getBody(), true);  
+            if (strpos((string)$response->getBody(), "No matching record") === false) {
+                $data[] = json_decode($response->getBody(), true);
                 $batch_start += 100;
             } else {
                 break;
             }
         } while (true);
 
-        if(!isset($data)) {
+        if (!isset($data)) {
             return false;
         } else {
             return $data;
         }
     }
-
 
     public function getUserGroups()
     {
@@ -196,29 +187,27 @@ class ArchonConnection
 
     public function getCollectionRecords()
     {
-        $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1 );
+        $this->collectionData = $this->fetchData(self::COLLECTION_ENDPOINT, 1);
         return $this->collectionData;
     }
 
     public function getCollectionContentRecords($collectionID)
     {
         $endpoint = self::COLLECTION_CONTENT_ENDPOINT . '&cid=' . $collectionID;
-        return $this->fetchData($endpoint, 1 );
+        return $this->fetchData($endpoint, 1);
     }
 
     public function getAllCollectionContentRecords()
     {
-
-        if($this->collectionData == null) 
-        {
+        if ($this->collectionData == null) {
             $this->getCollectionRecords();
         }
 
-        foreach($this->collectionData as $collection)
-        {
-            foreach($collection as $data)
-            {
-                $collectionContentRecords[$data['ID']] = collect($this->getCollectionContentRecords($data['ID']))->collapse()->keyBy('ID')->sortBy('ParentID')->toArray();
+        foreach ($this->collectionData as $collection) {
+            foreach ($collection as $data) {
+                $collectionContentRecords[$data['ID']] = collect(
+                    $this->getCollectionContentRecords($data['ID'])
+                )->collapse()->keyBy('ID')->sortBy('ParentID')->toArray();
             }
         }
 
@@ -228,15 +217,12 @@ class ArchonConnection
 
     public function getAllDigitalFiles()
     {
-        if($this->digitalFiles == null) 
-        {
-           $this->getDigitalFiles();
+        if ($this->digitalFiles == null) {
+            $this->getDigitalFiles();
         }
 
-        foreach($this->digitalFiles as $collection)
-        {
-            foreach($collection as $file) 
-            {
+        foreach ($this->digitalFiles as $collection) {
+            foreach ($collection as $file) {
                 $url = self::DIGITAL_FILE_BLOB_ENDPOINT . '&batch_start=1&fileid=' . $file['ID'];
                 $response = $this->client->get($url, [
                     'headers' => [
@@ -250,38 +236,39 @@ class ArchonConnection
 
     public function exportAccessionDataAtom()
     {
-        if($this->enumExtentUnits == null) 
-        {
-           $this->getExtentUnits();
+        if ($this->enumExtentUnits == null) {
+            $this->getExtentUnits();
         }
         
-        if ($this->enumProcessingPriorities == null) 
-        {
+        if ($this->enumProcessingPriorities == null) {
             $this->getProcessingPriorities();
         }
 
-        if($this->creators == null)
-        {
+        if ($this->creators == null) {
             $this->getCreators();
         }
 
-        if($this->enumMaterialTypes == null)
-        {
+        if ($this->enumMaterialTypes == null) {
             $this->getMaterialTypes();
         }
 
-        if($this->accessionData == null)
-        {
+        if ($this->accessionData == null) {
             $this->getAccessions();
         }
 
-        $accessionExportData = 
+        $accessionExportData =
             [
-                'accessionData' => collect($this->accessionData)->collapse()->keyBy('ID')->sort()->toArray(),
-                'extentUnits' => collect($this->enumExtentUnits)->collapse()->keyBy('ID')->toArray(),
-                'creators' => collect($this->creators)->collapse()->keyBy('ID')->sort()->toArray(),
-                'materialTypes' => collect($this->enumMaterialTypes)->collapse()->keyBy('ID')->sort()->toArray(),
-                'processingPriorities' => collect($this->enumProcessingPriorities)->collapse()->keyBy('ID')->sort()->toArray(),
+                'accessionData' => collect($this->accessionData)
+                    ->collapse()->keyBy('ID')->sort()->toArray(),
+                'extentUnits' => collect($this->enumExtentUnits)
+                    ->collapse()->keyBy('ID')->toArray(),
+                'creators' => collect($this->creators)
+                    ->collapse()->keyBy('ID')->sort()->toArray(),
+                'materialTypes' => collect($this->enumMaterialTypes)
+                    ->collapse()->keyBy('ID')->sort()->toArray(),
+                'processingPriorities' => collect(
+                    $this->enumProcessingPriorities
+                )->collapse()->keyBy('ID')->sort()->toArray(),
             ];
 
         return $accessionExportData;
@@ -289,38 +276,31 @@ class ArchonConnection
 
     public function exportInformationObjectsDataAtom()
     {
-        if($this->enumExtentUnits == null)
-        {
-           $this->getExtentUnits();
+        if ($this->enumExtentUnits == null) {
+            $this->getExtentUnits();
         }
 
-        if ($this->enumProcessingPriorities == null)
-        {
+        if ($this->enumProcessingPriorities == null) {
             $this->getProcessingPriorities();
         }
 
-        if($this->creators == null)
-        {
+        if ($this->creators == null) {
             $this->getCreators();
         }
 
-        if($this->enumMaterialTypes == null)
-        {
+        if ($this->enumMaterialTypes == null) {
             $this->getMaterialTypes();
         }
 
-        if($this->subjects == null)
-        {
+        if ($this->subjects == null) {
             $this->getSubjects();
         }
 
-        if($this->collectionData == null)
-        {
+        if ($this->collectionData == null) {
             $this->getCollectionRecords();
         }
 
-        if($this->collectionContentData == null)
-        {
+        if ($this->collectionContentData == null) {
             $this->getAllCollectionContentRecords();
         }
 
@@ -329,7 +309,12 @@ class ArchonConnection
             ['column'=>'SortOrder', 'order'=>'asc'],
         ];
 
-        $sortedCollectionContentData = $this->multiPropertySort(collect($this->collectionContentData)->collapse()->keyBy('ID'), $sorting_insructions);
+        $sortedCollectionContentData = $this->multiPropertySort(
+            collect($this->collectionContentData)
+                ->collapse()
+                ->keyBy('ID'),
+            $sorting_insructions
+        );
 
         $accessionExportData =
 
@@ -346,13 +331,11 @@ class ArchonConnection
 
     public function exportAuthorityRecordsDataAtom()
     {
-        if($this->creators == null)
-        {
+        if ($this->creators == null) {
             $this->getCreators();
         }
 
-        if($this->creatorSources == null)
-        {
+        if ($this->creatorSources == null) {
             $this->getCreatorSources();
         }
 
@@ -372,8 +355,7 @@ class ArchonConnection
     public function exportAccessionDataBelfor()
     {
 
-        if($this->accessionData == null)
-        {
+        if ($this->accessionData == null) {
             $this->getAccessions();
         }
 
@@ -388,8 +370,7 @@ class ArchonConnection
     public function exportInformationObjectsDataBelfor()
     {
 
-        if($this->collectionData == null)
-        {
+        if ($this->collectionData == null) {
             $this->getCollectionRecords();
         }
 
@@ -409,22 +390,24 @@ class ArchonConnection
     // https://stackoverflow.com/questions/47319120/how-do-i-sort-a-laravel-collection-by-multiple-properties-with-both-asc-and-desc
     public static function multiPropertySort(\Illuminate\Support\Collection $collection, array $sorting_instructions)
     {
-        return $collection->sort(function ($a, $b) use ($sorting_instructions)
-        {
-            foreach($sorting_instructions as $sorting_instruction){
+        return $collection->sort(function ($a, $b) use ($sorting_instructions) {
+            foreach ($sorting_instructions as $sorting_instruction) {
+                $a[$sorting_instruction['column']] =
+                    (isset($a[$sorting_instruction['column']]))
+                    ? $a[$sorting_instruction['column']]
+                    : '';
+                $b[$sorting_instruction['column']] =
+                    (isset($b[$sorting_instruction['column']]))
+                        ? $b[$sorting_instruction['column']]
+                        : '';
 
-                $a[$sorting_instruction['column']] = (isset($a[$sorting_instruction['column']])) ? $a[$sorting_instruction['column']] : '';
-                $b[$sorting_instruction['column']] = (isset($b[$sorting_instruction['column']])) ? $b[$sorting_instruction['column']] : '';
-
-                if(empty($sorting_instruction['order']) or strtolower($sorting_instruction['order']) == 'asc')
-                {
+                if (empty($sorting_instruction['order']) or strtolower($sorting_instruction['order']) == 'asc') {
                     $x = ($a[$sorting_instruction['column']] <=> $b[$sorting_instruction['column']]);
                 } else {
                     $x = ($b[$sorting_instruction['column']] <=> $a[$sorting_instruction['column']]);
                 }
 
-                if($x != 0)
-                {
+                if ($x != 0) {
                     return $x;
                 }
             }

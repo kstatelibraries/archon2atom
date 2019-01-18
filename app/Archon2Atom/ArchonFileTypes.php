@@ -14,14 +14,11 @@ class ArchonFileTypes
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'filetypeID' => $record['ID'],
                         'FileType' => $record['FileType'],
@@ -41,9 +38,9 @@ class ArchonFileTypes
         $header['content'] = [
             'filetypeID', 'FileType', 'FileExtensions', 'ContentType',
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_filetypes.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_filetypes.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

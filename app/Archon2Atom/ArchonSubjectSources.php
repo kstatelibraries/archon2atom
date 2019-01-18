@@ -14,14 +14,11 @@ class ArchonSubjectSources
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'subjectID' => $record['ID'],
                         'SubjectSource' => $record['SubjectSource'],
@@ -41,8 +38,9 @@ class ArchonSubjectSources
             'subjectID', 'SubjectSource', 'EADSource'
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_subjectsources.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_subjectsources.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

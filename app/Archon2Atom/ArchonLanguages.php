@@ -26,14 +26,11 @@ class ArchonLanguages
         $collectionLanguages = DB::table('tblCollections_CollectionLanguageIndex')->get();
 
 
-        foreach($collectionLanguages as $collection)
-        {
+        foreach ($collectionLanguages as $collection) {
             $collections[$collection->CollectionID][] = $this->langugeMapping($collection->LanguageID);
-            
         }
 
-        foreach ($collections as $id => $collection2)
-        {
+        foreach ($collections as $id => $collection2) {
             $this->archonLanguages[$id]['collectionID'] = $id;
             $this->archonLanguages[$id]['languages'] = implode("|", $collection2);
         }
@@ -42,19 +39,16 @@ class ArchonLanguages
 
     public function getLanguagesForCollectionID($collectionID)
     {
-        if( array_key_exists($collectionID, $this->archonLanguages) ) 
-        {
+        if (array_key_exists($collectionID, $this->archonLanguages)) {
             return $this->archonLanguages[$collectionID]['languages'];
-        }
-        else {
+        } else {
             return '';
         }
     }
 
     protected function langugeMapping($languageID)
     {
-        switch ($languageID)
-        {
+        switch ($languageID) {
             case 1968:
                 // Arabic -ara -- ar
                 return 'ar';

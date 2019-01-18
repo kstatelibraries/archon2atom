@@ -14,14 +14,11 @@ class ArchonExtentUnits
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'extentID' => $record['ID'],
                         'ExtentUnit' => $record['ExtentUnit'],
@@ -40,8 +37,9 @@ class ArchonExtentUnits
             'extentID', 'ExtentUnit',
             ];
             
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_extentunits.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_extentunits.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

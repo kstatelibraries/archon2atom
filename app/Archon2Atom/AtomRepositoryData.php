@@ -35,15 +35,23 @@ class AtomRepositoryData
                 'fax' => '',
                 'email' => 'libsc@ksu.edu',
                 'website' => 'http://www.lib.k-state.edu/special-collections',
+                // @codingStandardsIgnoreStart Generic.Files.LineLength
                 'history' => 'Kansas State University is a land-grant university in Manhattan, Kansas, that opened in 1863. In June 1967, Kansas State University Library established a special collections division, which included building an official university archives.',
+                // @codingStandardsIgnoreEnd Generic.Files.LineLength
+                // @codingStandardsIgnoreStart Generic.Files.LineLength
                 'geoculturalContext' => 'The Morse Department of Special Collections is part of Kansas State University Libraries in Manhattan, Kansas.',
+                // @codingStandardsIgnoreEnd Generic.Files.LineLength
                 'mandates' => '',
+                // @codingStandardsIgnoreStart Generic.Files.LineLength
                 'internalStructures' => 'For more information on our department, see http://www.lib.k-state.edu/special-collections',
+                // @codingStandardsIgnoreEnd Generic.Files.LineLength
                 'collectingPolicies' => '',
                 'buildings' => 'The department normally is located in Hale Library.',
                 'holdings' => '',
                 'findingAids' => '',
+                // @codingStandardsIgnoreStart Generic.Files.LineLength
                 'openingTimes' => 'Normal hours for public access are Monday to Friday, 10:00 a.m. to 5:00 p.m. See http://www.lib.k-state.edu/locations for further details about hours.',
+                // @codingStandardsIgnoreEnd Generic.Files.LineLength
                 'accessConditions' => '',
                 'disabledAccess' => '',
                 'researchServices' => '',
@@ -62,35 +70,36 @@ class AtomRepositoryData
                 'geographicSubregions' => '',
                 'thematicAreas' => '',
                 'culture' => 'en',
-            ];
+             ];
 
 
-        $outputData['repository'] = $resultingData;
+             $outputData['repository'] = $resultingData;
 
-        return $outputData;
+             return $outputData;
     }
 
     public function exportData($data)
     {
 
         $header['repository'] = [
-            'legacyId', 'uploadLimit', 'identifier', 'authorizedFormOfName', 
+            'legacyId', 'uploadLimit', 'identifier', 'authorizedFormOfName',
             'parallelFormsOfName', 'otherFormsOfName', 'types', 'contactPerson',
-            'streetAddress', 'city', 'region', 'country', 'postalCode', 
-            'telephone', 'fax', 'email', 'website', 'history', 
-            'geoculturalContext', 'mandates', 'internalStructures', 
-            'collectingPolicies', 'buildings', 'holdings', 'findingAids', 
-            'openingTimes', 'accessConditions', 'disabledAccess', 
-            'researchServices', 'reproductionServices', 'publicFacilities', 
-            'descriptionIdentifier', 'institutionIdentifier', 
-            'descriptionRules', 'descriptionStatus', 'levelOfDetail', 
-            'descriptionRevisionHistory', 'language', 'script', 
-            'descriptionSources', 'maintenanceNote', 'geographicSubregions', 
+            'streetAddress', 'city', 'region', 'country', 'postalCode',
+            'telephone', 'fax', 'email', 'website', 'history',
+            'geoculturalContext', 'mandates', 'internalStructures',
+            'collectingPolicies', 'buildings', 'holdings', 'findingAids',
+            'openingTimes', 'accessConditions', 'disabledAccess',
+            'researchServices', 'reproductionServices', 'publicFacilities',
+            'descriptionIdentifier', 'institutionIdentifier',
+            'descriptionRules', 'descriptionStatus', 'levelOfDetail',
+            'descriptionRevisionHistory', 'language', 'script',
+            'descriptionSources', 'maintenanceNote', 'geographicSubregions',
             'thematicAreas', 'culture',
-            ];
+        ];
 
-            $writer_users = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/repository_import.csv', 'w+');
-            $writer_users->insertOne($header['repository']);
-            $writer_users->insertAll($data['repository']); 
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_import/';
+        $writer_users = Writer::createFromPath($path . 'repository_import.csv', 'w+');
+        $writer_users->insertOne($header['repository']);
+        $writer_users->insertAll($data['repository']);
     }
 }

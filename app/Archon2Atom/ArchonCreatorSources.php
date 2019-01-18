@@ -14,14 +14,11 @@ class ArchonCreatorSources
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'creatorSourceID' => $record['ID'],
                         'CreatorSource' => $record['CreatorSource'],
@@ -40,9 +37,10 @@ class ArchonCreatorSources
         $header['content'] = [
             'creatorSourceID', 'CreatorSource', 'SourceAbbreviation'
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_creatorsources.csv', 'w+');
+
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_creatorsources.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

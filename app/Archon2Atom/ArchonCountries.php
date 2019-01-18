@@ -14,14 +14,11 @@ class ArchonCountries
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'countryID' => $record['ID'],
                         'CountryName' => $record['CountryName'],
@@ -42,9 +39,10 @@ class ArchonCountries
         $header['content'] = [
             'countryID', 'CountryName', 'ISOAlpha2', 'ISOAlpha3', 'ISONumeric3',
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/enum_countries.csv', 'w+');
+
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'enum_countries.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

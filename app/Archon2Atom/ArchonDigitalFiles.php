@@ -14,14 +14,11 @@ class ArchonDigitalFiles
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'digitalFileID' => $record['ID'],
                         'AccessLevel' => $record['AccessLevel'],
@@ -43,11 +40,12 @@ class ArchonDigitalFiles
     public function exportData($data)
     {
         $header['content'] = [
-            'digitalFileID', 'AccessLevel', 'DigitalContentID', 'Title', 'Filename', 'FileTypeID', 'Bytes', 'DisplayOrder'
+            'digitalFileID', 'AccessLevel', 'DigitalContentID', 'Title',
+            'Filename', 'FileTypeID', 'Bytes', 'DisplayOrder'
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/digitalfiles.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'digitalfiles.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }

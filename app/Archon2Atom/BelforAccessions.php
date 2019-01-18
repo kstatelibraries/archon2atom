@@ -17,16 +17,13 @@ class BelforAccessions
     public function processData($data)
     {
 
-        foreach ($data['accessionData'] as $record)
-        {
- 
+        foreach ($data['accessionData'] as $record) {
             $title = explode(", ", $record['Title'], 2);
 
             $resultingData[] = [
                 'accessionNumber' => $record['Identifier'],
                 'title' => (count($title) > 1 ? $title[1] : $record['Title']),
             ];
-
         }
 
         $outputData['accessions'] = $resultingData;
@@ -41,8 +38,9 @@ class BelforAccessions
             'accessionNumber','title',
             ];
 
-        $writer_users = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/belfor/accession_data.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/belfor/';
+        $writer_users = Writer::createFromPath($path . 'accession_data.csv', 'w+');
         $writer_users->insertOne($header['accessions']);
-        $writer_users->insertAll($data['accessions']); 
+        $writer_users->insertAll($data['accessions']);
     }
 }

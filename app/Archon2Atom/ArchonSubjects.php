@@ -14,14 +14,11 @@ class ArchonSubjects
 
     public function processData($data)
     {
-        foreach($data as $recordSet)
-        {
-            if(is_null($recordSet))
-            {
+        foreach ($data as $recordSet) {
+            if (is_null($recordSet)) {
                 continue;
             } else {
-                foreach($recordSet as $record)
-                {
+                foreach ($recordSet as $record) {
                     $resultingData[] = [
                         'subjectID' => $record['ID'],
                         'Subject' => $record['Subject'],
@@ -29,7 +26,7 @@ class ArchonSubjects
                         'SubjectSourceID' => $record['SubjectSourceID'],
                         'Identifier' => $record['Identifier'],
                         'ParentID' => $record['ParentID'],
-                        'Description' => $record['Description'],                                                
+                        'Description' => $record['Description'],
                     ];
                 }
             }
@@ -42,11 +39,12 @@ class ArchonSubjects
     public function exportData($data)
     {
         $header['content'] = [
-            'subjectID', 'Subject', 'SubjectTypeID', 'SubjectSourceID', 'Identifier', 'ParentID', 'Description'
+            'subjectID', 'Subject', 'SubjectTypeID', 'SubjectSourceID',
+            'Identifier', 'ParentID', 'Description'
             ];
-            
-        $writer_content = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/subjects.csv', 'w+');
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
+        $writer_content = Writer::createFromPath($path . 'subjects.csv', 'w+');
         $writer_content->insertOne($header['content']);
-        $writer_content->insertAll($data['content']); //using an array
+        $writer_content->insertAll($data['content']);
     }
 }
