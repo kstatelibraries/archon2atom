@@ -98,19 +98,19 @@ class ArchonDigitalObjects
         $writer_accessions->insertAll($data['digitalobjects']);
 
         if (!is_null($data['subjects'])) {
-            $writer_accessions = Writer::createFromPath($path . 'digitalobjects-subjects.csv', 'w+');
+            $writer_subjects = Writer::createFromPath($path . 'digitalobjects-subjects.csv', 'w+');
             $writer_subjects->insertOne($header['subjects']);
             $writer_subjects->insertAll($data['subjects']);
         }
         
         if (!is_null($data['creators'])) {
-            $writer_accessions = Writer::createFromPath($path . 'digitalobjects-creators.csv', 'w+');
+            $writer_creators = Writer::createFromPath($path . 'digitalobjects-creators.csv', 'w+');
             $writer_creators->insertOne($header['creators']);
             $writer_creators->insertAll($data['creators']);
         }
 
         if (!is_null($data['languages'])) {
-            $writer_accessions = Writer::createFromPath($path . 'digitalobjects-languages.csv', 'w+');
+            $writer_collections = Writer::createFromPath($path . 'digitalobjects-languages.csv', 'w+');
             $writer_collections->insertOne($header['languages']);
             $writer_collections->insertAll($data['languages']);
         }

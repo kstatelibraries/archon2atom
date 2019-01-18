@@ -79,7 +79,7 @@ class AtomInformationObjects
                                 '%s|%s, %s',
                                 $tmpLocationName,
                                 $location['RangeValue'],
-                                $location['Content'],
+                                $location['Content']
                             );
                             $tmpLocation = sprintf('%s|Annex', $tmpLocation);
                         } else {

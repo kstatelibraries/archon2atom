@@ -147,6 +147,7 @@ class ArchonAccessions
             'classifications',
         ];
 
+        $path = '/home/vagrant/code/archon2atom/storage/app/data_export/';
         foreach ($dataSet as $item) {
             $name = ($item == 'accessions' ? $item : 'accessions-' . $item);
             $writer = Writer::createFromPath(
