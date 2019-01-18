@@ -178,20 +178,24 @@ class AtomAuthorityRecords
             'sourceAuthorizedFormOfName', 'targetAuthorizedFormOfName',
             'category', 'description', 'date', 'startDate', 'endDate',
             'culture',
-       ];
+        ];
 
-        $writer_authority_records = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/authority_records_import.csv', 'w+');
-        $writer_authority_records->insertOne($header['authorityRecords']);
-        $writer_authority_records->insertAll($data['authorityRecords']['authorityRecords']); 
+        $dataSet = [
+            'authorityRecords',
+            'aliases',
+            'relationships',
+        ];
 
-
-        $writer_authority_records_aliases = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/authority_records_aliases_import.csv', 'w+');
-        $writer_authority_records_aliases->insertOne($header['authorityRecordsAliases']);
-        $writer_authority_records_aliases->insertAll($data['authorityRecords']['authorityRecordsAliases']); 
-
-        $writer_authority_records_relationships = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_import/authority_records_relationships_import.csv', 'w+');
-        $writer_authority_records_relationships->insertOne($header['authorityRecordsRelationships']);
-        $writer_authority_records_relationships->insertAll($data['authorityRecords']['authorityRecordsRelationships']); 
+        foreach ($dataSet as $item) {
+            $name = ($item == 'authorityRecords' ? $item : 'authorityRecords-' . $item);
+            $writer = Writer::createFromPath(
+                '/home/vagrant/code/archon2atom/storage/app/data_import/' .
+                $name . '.csv',
+                'w+'
+            );
+            $writer->insertOne($header[$item]);
+            $writer->insertAll($data[$item]);
+        }
     }
 
     protected function typeOfEntity($entityID)

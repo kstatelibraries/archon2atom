@@ -70,17 +70,20 @@ class ArchonUsers
             'userID', 'repositoryID'
         ];
 
+        $dataSet = [
+            'users',
+            'usergroups',
+            'repository',
+        ];
 
-        $writer_users = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/users.csv', 'w+');
-        $writer_users->insertOne($header['users']);
-        $writer_users->insertAll($data['users']); 
-
-        $writer_usergroups = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/users-usergroups.csv', 'w+');
-        $writer_usergroups->insertOne($header['usergroups']);
-        $writer_usergroups->insertAll($data['usergroups']); 
-
-        $writer_repositories = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/users-repository.csv', 'w+');
-        $writer_repositories->insertOne($header['repository']);
-        $writer_repositories->insertAll($data['repository']);
+        foreach ($dataSet as $item) {
+            $name = ($item == 'users' ? $item : 'users-' . $item);
+            $writer = Writer::createFromPath(
+                '/home/vagrant/code/archon2atom/storage/app/data_export/' . $name . '.csv',
+                'w+'
+            );
+            $writer->insertOne($header[$item]);
+            $writer->insertAll($data[$item]);
+        }
     }
 }

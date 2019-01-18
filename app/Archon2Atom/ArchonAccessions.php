@@ -138,31 +138,23 @@ class ArchonAccessions
             'accessionId', 'classificationID'
         ];
 
+        $dataSet = [
+            'accessions',
+            'subjects',
+            'locations',
+            'creators',
+            'collections',
+            'classifications',
+        ];
 
-        $writer_accessions = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions.csv', 'w+');
-        $writer_accessions->insertOne($header['accessions']);
-        $writer_accessions->insertAll($data['accessions']);
-
-        $writer_subjects = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions-subjects.csv', 'w+');
-        $writer_subjects->insertOne($header['subjects']);
-        $writer_subjects->insertAll($data['subjects']);
-
-        $writer_locations = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions-locations.csv', 'w+');
-        $writer_locations->insertOne($header['locations']);
-        $writer_locations->insertAll($data['locations']);
-
-        $writer_creators = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions-creators.csv', 'w+');
-        $writer_creators->insertOne($header['creators']);
-        $writer_creators->insertAll($data['creators']);
-
-        $writer_collections = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions-collections.csv', 'w+');
-        $writer_collections->insertOne($header['collections']);
-        $writer_collections->insertAll($data['collections']);
-
-        $writer_classifications = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/accessions-classifications.csv', 'w+');
-        $writer_classifications->insertOne($header['classifications']);
-        $writer_classifications->insertAll($data['classifications']);
-
-
+        foreach ($dataSet as $item) {
+            $name = ($item == 'accessions' ? $item : 'accessions-' . $item);
+            $writer = Writer::createFromPath(
+                $path . $name . '.csv',
+                'w+'
+            );
+            $writer->insertOne($header[$item]);
+            $writer->insertAll($data[$item]);
+        }
     }
 }

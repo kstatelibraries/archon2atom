@@ -70,14 +70,20 @@ class ArchonCreators
             'creatorID', 'RelatedCreatorID', 'CreatorRelationshipTypeID', 'Description',
         ];
 
+        $dataSet = [
+            'creators',
+            'creatorrelationships',
+        ];
 
-        $writer_accessions = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/creators.csv', 'w+');
-        $writer_accessions->insertOne($header['creators']);
-        $writer_accessions->insertAll($data['creators']);
-
-        $writer_subjects = Writer::createFromPath('/home/vagrant/code/archon2atom/storage/app/data_export/creators-creatorrelationships.csv', 'w+');
-        $writer_subjects->insertOne($header['creatorrelationships']);
-        $writer_subjects->insertAll($data['creatorrelationships']);
-
+        foreach ($dataSet as $item) {
+            $name = ($item == 'creators' ? $item : 'creators-' . $item);
+            $writer = Writer::createFromPath(
+                '/home/vagrant/code/archon2atom/storage/app/data_export/' .
+                $name . '.csv',
+                'w+'
+            );
+            $writer->insertOne($header[$item]);
+            $writer->insertAll($data[$item]);
+        }
     }
 }
