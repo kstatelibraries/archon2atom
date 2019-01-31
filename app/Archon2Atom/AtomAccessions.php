@@ -117,11 +117,11 @@ class AtomAccessions
                     );
 
                     if ($k == 0) {
-                        $eventStartDate = sprintf("%s", $tmpStartDate);
-                        $eventEndDate = sprintf("%s", $tmpEndDate);
+                        $eventStartDate = sprintf("%s", trim($tmpStartDate));
+                        $eventEndDate = sprintf("%s", trim($tmpEndDate));
                     } else {
-                        $eventStartDate = sprintf("%s|%s", $eventStartDate, $tmpStartDate);
-                        $eventEndDate = sprintf("%s|%s", $eventEndDate, $tmpEndDate);
+                        $eventStartDate = sprintf("%s|%s", $eventStartDate, trim($tmpStartDate));
+                        $eventEndDate = sprintf("%s|%s", $eventEndDate, trim($tmpEndDate));
                     }
                     $k++;
                 }
