@@ -87,6 +87,7 @@ class AtomAccessions
 
             $tmpDate = $record['InclusiveDates'];
             $tmpDate = str_replace("–", "-", $tmpDate);
+            $tmpDate = preg_replace('/[;,&\/]/','|',$tmpDate);
             $eventDates = explode("|", $tmpDate);
 
             $eventStartDate = '';
