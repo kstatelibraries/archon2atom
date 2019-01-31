@@ -71,17 +71,11 @@ class AtomAccessions
                     );
                     if ($j == 0) {
                         $tmpCreators = sprintf('%s', $creatorText);
-                        $tmpDate = sprintf('%s', $data['creators'][$creator]['Dates']);
                     } else {
                         $tmpCreators = sprintf(
                             '%s|%s',
                             $tmpCreators,
                             $creatorText
-                        );
-                        $tmpDate = sprintf(
-                            '%s|%s',
-                            $tmpDate,
-                            $data['creators'][$creator]['Dates']
                         );
                     }
                     $j++;
@@ -91,6 +85,7 @@ class AtomAccessions
 
             $title = explode(", ", $record['Title'], 2);
 
+            $tmpDate = $record['InclusiveDates'];
             $tmpDate = str_replace("–", "-", $tmpDate);
             $eventDates = explode("|", $tmpDate);
 
@@ -98,10 +93,10 @@ class AtomAccessions
             $eventEndDate = '';
 
             if (count($eventDates) == 1) {
-                $creatorEventDates = explode("-", $eventDates[0]);
-                $eventStartDate = preg_replace('/[^0-9]/', '', $creatorEventDates[0]);
-                $eventEndDate = (array_key_exists(1, $creatorEventDates)
-                    ? preg_replace('/[^0-9]/', '', $creatorEventDates[1])
+                $eventDates = explode("-", $eventDates[0]);
+                $eventStartDate = preg_replace('/[^0-9]/', '', $eventDates[0]);
+                $eventEndDate = (array_key_exists(1, $eventDates)
+                    ? preg_replace('/[^0-9]/', '', $eventDates[1])
                     : ''
                 );
             } elseif ($tmpDate == "|") {
@@ -112,10 +107,11 @@ class AtomAccessions
                 $tmpStartDate = '';
                 $tmpEndDate = '';
                 foreach ($eventDates as $event) {
-                    $creatorEventDates = explode("-", $event);
-                    $tmpStartDate = preg_replace('/[^0-9]/', '', $creatorEventDates[0]);
-                    $tmpEndDate = (array_key_exists(1, $creatorEventDates)
-                        ? preg_replace('/[^0-9]/', '', $creatorEventDates[1])
+                    $eventDates = explode("-", $event);
+                    $tmpStartDate = preg_replace('/[^0-9]/', '', $eventDates[0]);
+                    // $tmpStartDate = preg_replace('/([^\d]+)(?:[0-9]{4})/', '', $eventDates[0]);
+                    $tmpEndDate = (array_key_exists(1, $eventDates)
+                        ? preg_replace('/[^0-9]/', '', $eventDates[1])
                         : ''
                     );
 
