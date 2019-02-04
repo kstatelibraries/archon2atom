@@ -20,7 +20,7 @@ class AtomRepositoryData
              $resultingData[] = [
                 'legacyId' => '1',
                 'uploadLimit' => '2',
-                'identifier' => '',
+                'identifier' => 'US kmk',
                 'authorizedFormOfName' => 'Richard L. D. and Marjorie J. Morse Department of Special Collections',
                 'parallelFormsOfName' => '',
                 'otherFormsOfName' => 'Morse Department of Special Collections',
