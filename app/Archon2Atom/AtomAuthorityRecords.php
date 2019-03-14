@@ -194,7 +194,7 @@ class AtomAuthorityRecords
                 'w+'
             );
             $writer->insertOne($header[$item]);
-            $writer->insertAll($data[$item]);
+            $writer->insertAll($data['authorityRecords'][$item]);
         }
     }
 

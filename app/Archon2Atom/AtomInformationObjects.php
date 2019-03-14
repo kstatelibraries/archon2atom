@@ -179,7 +179,9 @@ class AtomInformationObjects
                 'parentId' => '',
                 'qubitParentSlug' => '',
                 'identifier' => '', //$record['ID'],
-                'accessionNumber' => $this->getAccessions($record['CustodialHistory'], $record['CollectionIdentifier']),
+                'accessionNumber' => strtoupper(
+                    $this->getAccessions($record['CustodialHistory'], $record['CollectionIdentifier'])
+                ),
                 'title' => $record['Title'],
                 'levelOfDescription' => 'Collection',
                 'extentAndMedium' => (array_key_exists($record['ExtentUnitID'], $data['extentUnits'])
@@ -442,12 +444,12 @@ class AtomInformationObjects
             $accessionFromData = preg_match_all(
                 '/(?:([UupP]{1}\d{4}\.\d{1,3})|(\d{4}-\d{2}\.\d{1,3}))/',
                 $identifier,
-                $accessionIds,
+                $accessionIds[], // needs to be an array, otherwise overwrites existing values
                 PREG_SET_ORDER
             );
         }
-
-        $accessions = collect($accessionIds)->collapse()->unique()->filter(
+        // double collapse
+        $accessions = collect($accessionIds)->collapse()->collapse()->unique()->filter(
             function ($value) {
                 return $value != '';
             }

@@ -127,7 +127,7 @@ class AtomAccessions
                 }
             }
             $resultingData[] = [
-                'accessionNumber' => $record['Identifier'],
+                'accessionNumber' => strtoupper($record['Identifier']),
                 'acquisitionDate' => Carbon::createFromFormat('Ymd', $record['AccessionDate'], 'UTC')->toDateString(),
                 'sourceOfAcquisition' => $record['Donor'],
                 'locationInformation' => $tmpLocation,
