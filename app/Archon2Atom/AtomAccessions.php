@@ -33,7 +33,7 @@ class AtomAccessions
 
                     if ($i == 0) {
                         $tmpLocation = sprintf(
-                            '%s, %s; %s:R%s/S%s/Sf%s',
+                            'Pre-fire 2018: %s, %s; %s:R%s/S%s/Sf%s',
                             $location['Content'],
                             $extentUnitString,
                             $location['Location'],
@@ -43,7 +43,7 @@ class AtomAccessions
                         );
                     } else {
                         $tmpLocation = sprintf(
-                            "%s\r\n%s, %s; %s:R%s/S%s/Sf%s",
+                            "Pre-fire 2018: %s\r\n%s, %s; %s:R%s/S%s/Sf%s",
                             $tmpLocation,
                             $location['Content'],
                             $extentUnitString,
