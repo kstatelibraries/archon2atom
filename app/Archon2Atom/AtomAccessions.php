@@ -206,12 +206,14 @@ class AtomAccessions
         $accessionYear = $this->parseAccessionNumberForYear($accessionNumber);
         switch($donorName)
         {
+            /* Begin special cases broken by year */
             case "Cooperative Extension Service":
                 if($accessionYear >= 1984 && $accessionYear <= 1997) {
                     return "Division of Cooperative Extension";
                 } else if ($accessionYear >= 1998) {
                     return "Kansas State Research and Extension";
                 } else {
+                    printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
                     return "***LOOKAT***";
                 }
                 break;
@@ -228,6 +230,7 @@ class AtomAccessions
                 } else if ($accessionYear >= 2012) {
                     return "Division of Communications and Marketing";
                 } else {
+                    printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
                     return "***LOOKAT***";
                 }
                 break;
@@ -236,7 +239,10 @@ class AtomAccessions
                     return "News and Information";
                 } else if ($accessionYear >= 1991 && $accessionYear <= 1994) {
                     return "News Services";
+                } else if($accessionYear == 1985) {
+                    return "News Services";
                 } else {
+                    printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
                     return "***LOOKAT***";
                 }
                 break;
@@ -248,9 +254,22 @@ class AtomAccessions
                 } else if ($accessionYear >= 1987 && $accessionYear <= 1988) {
                     return "News and Information";
                 }else {
+                    printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
                     return "***LOOKAT***";
                 }
                 break;
+
+            case "News Services":
+                if($accessionYear >= 1993 && $accessionYear <= 1994) {
+                    return "News Services";
+                } else if($accessionYear == 2011) {
+                    return "News Media Services";
+                }else {
+                    printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
+                    return "***LOOKAT***";
+                }
+                break;
+            /* End Special Cases */
             case "":
                 return "";
                 break;
@@ -2252,9 +2271,6 @@ class AtomAccessions
             case "News and Editorial Services, Division of Communications and Marketing":
                 return "News and Editorial Services, Division of Communications and Marketing";
                 break;
-            case "News Services":
-                return "News Services (1993-1994), News Media Services (2011)";
-                break;
             case "News Services (Media Relations)":
                 return "Media Relations and Marketing";
                 break;
@@ -2660,7 +2676,7 @@ class AtomAccessions
                 return "Roderic Simpson";
                 break;
             case "Roe Borsdorf, Food & Feed Grains Institute":
-                return "Food and Feed Grains Institute";
+                return "Food and Feed Grain Institute";
                 break;
             case "Roger Adams":
                 return "Roger C. Adams";
@@ -3047,6 +3063,7 @@ class AtomAccessions
                 return "Zoe Climenhaga";
                 break;
             default:
+                printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
                 return "***LOOKAT***";
                 break;
         }
