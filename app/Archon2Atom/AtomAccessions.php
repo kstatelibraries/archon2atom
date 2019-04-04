@@ -3064,7 +3064,6 @@ class AtomAccessions
                 break;
             default:
                 printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
-                return "***LOOKAT***";
                 break;
         }
     }
