@@ -239,7 +239,7 @@ class AtomAccessions
                     return "News and Information";
                 } else if ($accessionYear >= 1991 && $accessionYear <= 1994) {
                     return "News Services";
-                } else if($accessionYear == 1985) {
+                } else if($accessionYear == 1995) {
                     return "News Services";
                 } else {
                     printf("%s,%s,***LOOKAT***\n",$donorName,$accessionNumber);
