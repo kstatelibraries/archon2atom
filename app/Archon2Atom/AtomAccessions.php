@@ -271,7 +271,7 @@ class AtomAccessions
                 break;
             /* End Special Cases */
             case "":
-                return "";
+                return "Research Needed";
                 break;
             case "(George F. Thompson)":
                 return "Unknown";
