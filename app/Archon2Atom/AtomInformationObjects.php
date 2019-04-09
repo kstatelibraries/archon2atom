@@ -63,7 +63,7 @@ class AtomInformationObjects
                         } else {
                             $tmpLocationName = $location['Content'];
                             $tmpLocation = sprintf(
-                                'Pre-fire 2018, %s:R%s/S%s/Sf%s; %s, %s',
+                                'Pre-fire 2018: %s:R%s/S%s/Sf%s; %s, %s',
                                 $location['Location'],
                                 $location['RangeValue'],
                                 $location['Section'],
@@ -89,7 +89,7 @@ class AtomInformationObjects
                                 $location['Content']
                             );
                             $tmpLocation = sprintf(
-                                '%s|2018, %s:R%s/S%s/Sf%s; %s, %s',
+                                '%s|Pre-fire 2018: %s:R%s/S%s/Sf%s; %s, %s',
                                 $tmpLocation,
                                 $location['Location'],
                                 $location['RangeValue'],
